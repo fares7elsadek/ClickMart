@@ -1,0 +1,64 @@
+﻿@model LoginViewModel
+@{
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link href="~/css/Account.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="d-flex justify-content-center mb-1 mt-3">
+		<img class="img-fluid" src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png" height="35" />
+	</div>
+	<div class="container mt-5 border border-info-subtle rounded p-3">
+		<div class="row">
+			<div class="panel panel-primary">
+				<div class="panel-body">
+					<form asp-action="login" role="form">
+						<div class="form-group mb-3">
+							<h2>Sign in</h2>
+						</div>
+						<div class="form-group mb-3">
+							<label asp-for="Email" style="font-weight:bold">Email or mobile phone number</label>
+							<input asp-for="Email" class="form-control">
+							<span asp-validation-for="Email"></span>
+						</div>
+						<div class="form-group mb-3">
+							<label asp-for="Password" style="font-weight:bold">Password</label>
+							<span class="right"><a href="#">Forgot your password?</a></span>
+							<input asp-for="Password" class="form-control">
+							<span asp-validation-for="Password"></span>
+						</div>
+						<div class="form-group" style="padding-top: 12px;">
+							<button id="signinSubmit" type="submit" class="btn btn-success btn-block">Sign in</button>
+						</div>
+						<div class="form-group divider mb-3">
+							<hr class="left"><small>New to site?</small><hr class="right">
+						</div>
+						<p class="form-group"><a asp-action="register" class="btn btn-info btn-block">Create an account</a></p>
+						<p class="form-group">By signing in you are agreeing to our <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr class="line"/>
+	<div class="d-flex flex-row justify-content-center footer_1 mt-2">
+		<div class="row">
+			<div class="col">
+				<p class="conditions"><a>Conditions of Use &nbsp &nbsp &nbsp </a>   <a>Privacy Notice&nbsp &nbsp &nbsp </a>   <a>Help&nbsp &nbsp &nbsp </a></p>
+				<p class="copy-right">&copy; 2024 ClickMart. All rights reserved.</p>
+			</div>
+		</div>
+	</div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_ValidationScriptsPartial"/>
+</body>
+</html>
