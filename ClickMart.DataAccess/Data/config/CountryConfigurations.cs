@@ -28,7 +28,7 @@ namespace ClickMart.DataAccess.Data.config
 				.HasForeignKey(c => c.CountryId)
 				.OnDelete(DeleteBehavior.Cascade);
 
-			builder.HasData(Countries());
+			//builder.HasData(Countries());
 		}
 
 		public List<Country> Countries()

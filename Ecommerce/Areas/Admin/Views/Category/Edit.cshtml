@@ -11,16 +11,19 @@
             <div class="mb-3">
                 <label asp-for="Name" class="form-label">Category Name</label>
                 <input  class="form-control" asp-for="Name" placeholder="Enter category name" required>
+                <span class="text-danger" asp-validation-for="Name"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="DisplayOrder" class="form-label">Display Order</label>
                 <input  class="form-control" asp-for="DisplayOrder" placeholder="Enter display order" required>
+                <span class="text-danger" asp-validation-for="DisplayOrder"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Description" class="form-label">Display Order</label>
                 <input class="form-control"  asp-for="Description" placeholder="Enter Category Description" required>
+                <span class="text-danger" asp-validation-for="Description"></span>
             </div>
 
             <div class="d-flex justify-content-between">

@@ -4,6 +4,7 @@ using ClickMart.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240827001937_Product-with-Category")]
+    partial class ProductwithCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,10 +138,6 @@ namespace ClickMart.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal");
@@ -160,46 +159,41 @@ namespace ClickMart.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "8cc58fd9-63a0-4997-b929-12f602b08665",
+                            Id = "ca3948ba-082d-4667-92c5-a6ec045cab62",
                             CategoryId = "33ECBB18-84C1-4C7D-AB5D-84F3501F3059",
                             Description = "A high-quality wireless mouse with ergonomic design and long battery life.",
-                            ImageUrl = "",
                             Price = 25.99m,
                             Title = "Wireless Mouse"
                         },
                         new
                         {
-                            Id = "b57d880d-e12f-4f77-846e-82acbc7bf14e",
+                            Id = "907f93cf-57f1-4cf6-a00b-f456466669c5",
                             CategoryId = "A68F7FAB-EC3A-4719-BD6D-A8DF974F2F0A",
                             Description = "A durable mechanical keyboard with customizable RGB lighting and tactile feedback.",
-                            ImageUrl = "",
                             Price = 75.50m,
                             Title = "Mechanical Keyboard"
                         },
                         new
                         {
-                            Id = "e5098b60-f31b-4c5c-a0a5-88b8243eef67",
+                            Id = "fe4a5fdd-6887-4c3e-98cb-94402cf70a8c",
                             CategoryId = "33ECBB18-84C1-4C7D-AB5D-84F3501F3059",
                             Description = "A 27-inch 4K UHD monitor with vivid colors and sharp image quality.",
-                            ImageUrl = "",
                             Price = 349.99m,
                             Title = "4K Monitor"
                         },
                         new
                         {
-                            Id = "f5855996-5248-4384-aaa4-526968e58820",
+                            Id = "09a109c7-9bb9-43b1-84c7-e634a6730deb",
                             CategoryId = "D54F4A29-8371-4AF5-B689-F2C1108F2295",
                             Description = "A compact USB-C hub with multiple ports including HDMI, USB 3.0, and Ethernet.",
-                            ImageUrl = "",
                             Price = 39.99m,
                             Title = "USB-C Hub"
                         },
                         new
                         {
-                            Id = "8353f715-a95c-4c46-a8aa-46eaaf3de867",
+                            Id = "da348224-5570-4e4f-a146-ad5ff62e39e8",
                             CategoryId = "A68F7FAB-EC3A-4719-BD6D-A8DF974F2F0A",
                             Description = "A fast external SSD with 1TB storage capacity and USB 3.1 connectivity.",
-                            ImageUrl = "",
                             Price = 120.00m,
                             Title = "External SSD"
                         });

@@ -1,3 +1,4 @@
+using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -7,21 +8,15 @@ namespace ClickMart.Areas.Customer.Controllers
     [Area("Customer")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IUnitOfWork _unitOfWork;
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
+            _unitOfWork = unitOfWork;
         }
-
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return View(_unitOfWork.Product.GetAll().ToList());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -15,7 +15,7 @@ namespace ClickMart.DataAccess.Repository
 
         public void Update(Category category)
         {
-           this._db.Update(category);
+           this._db.Categories.Update(category);
         }
     }
 }

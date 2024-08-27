@@ -12,11 +12,13 @@ namespace ClickMart.DataAccess.Repository
     public class UnitOfWork : IUnitOfWork
     {
         public ICategoryRepository Category { get; private set; }
+        public IProductRepository Product { get; private set; }
         private AppDbContext _db;
         public UnitOfWork(AppDbContext db)
         {
             this._db = db;
             Category = new CategoryRepository(this._db);
+            Product = new ProductRepository(this._db);
         }
         public void Save()
         {

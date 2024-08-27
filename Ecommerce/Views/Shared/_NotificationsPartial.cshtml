@@ -3,7 +3,7 @@
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script type="text/javascript">
-        toastr.info('@TempData["Success"]')
+        toastr.success('@TempData["Success"]')
     </script>
 }
 
@@ -12,6 +12,6 @@
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script type="text/javascript">
-        toastr.info('@TempData["Error"]')
+        toastr.error('@TempData["Error"]')
     </script>
 }

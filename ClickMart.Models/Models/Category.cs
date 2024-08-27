@@ -23,5 +23,7 @@ namespace ClickMart.Models.Models
         public int DisplayOrder { get; set; }
 
         public string Description { get; set; }
+
+        public List<Product> Products { get; set; }
     }
 }

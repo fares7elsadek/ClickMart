@@ -11,13 +11,10 @@ namespace ClickMart.DataAccess.Data
 
 		public DbSet<Address> Address { get; set; }
 		public DbSet<User> Users { get; set; }
-
 		public DbSet<Country> Countries { get; set; }
-
 		public DbSet<UserAddress> UserAddresses { get; set; }
-
-
 		public DbSet<Category> Categories { get; set; }
+		public DbSet<Product> Products { get; set; }
 
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
