@@ -1,0 +1,82 @@
+﻿@model Product
+
+@{
+    @if(Model?.Id == null)
+    {
+        ViewData["Title"] = "Create New Product";
+    }
+    else
+    {
+        ViewData["Title"] = "Update Product";
+    }
+}
+
+<div class="container">
+    <div class="content m-auto mt-5 p-4 border rounded-3 shadow-sm" style="max-width: 600px;">
+        @if (Model?.Id==null)
+        {
+            <h2 class="mb-4 text-center">Create New Product</h2>
+        }
+        else
+        {
+            <h2 class="mb-4 text-center">Update Product</h2>
+        }
+        <div asp-validation-summary="All"></div>
+        <form asp-action="Upsert" enctype="multipart/form-data">
+            <input asp-for="ImageUrl" hidden/>
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Product Title</label>
+                <input asp-for="Title" class="form-control" placeholder="Enter product Title" required>
+                <span class="text-danger" asp-validation-for="Title"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" placeholder="Enter product description"></textarea>
+                <span class="text-danger" asp-validation-for="Description"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label">Price</label>
+                <input asp-for="Price" class="form-control" placeholder="Enter Product Price" required>
+                <span class="text-danger" asp-validation-for="Price"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label">Category</label>
+                <select asp-for="CategoryId" asp-items="@ViewBag.Categories" class="form-select">
+                    <option disabled selected>--Select Category--</option>
+                </select>
+                <span class="text-danger" asp-validation-for="Price"></span>
+            </div>
+            <div class="mb-3">
+                <label for="ImageFile" class="form-label">Image</label>
+                <input type="file" name="ImageFile" class="form-control">
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/od6loqce43iowee1cc21sjgnv98d50zcn6so0x9aw3u1h35b/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+        });
+    </script>
+}
+

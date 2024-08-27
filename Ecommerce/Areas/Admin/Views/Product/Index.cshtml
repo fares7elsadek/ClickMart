@@ -8,7 +8,7 @@
     <div class="content m-auto mt-5" style="width: 80%;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Products</h2>
-            <a class="btn btn-primary rounded-pill d-flex align-items-center" href="@Url.Action("Create")">
+            <a class="btn btn-primary rounded-pill d-flex align-items-center" href="@Url.Action("Upsert")">
                 <i class="bi bi-plus-circle me-2"></i> Create New Product
             </a>
         </div>
@@ -28,9 +28,9 @@
                         <tr>
                             <td>@item.Title</td>
                             <td>@item.Price.ToString("C")</td>
-                            <td>@* @item.Category.Name *@</td>
+                            <td>@item?.Category?.Name</td>
                             <td>
-                                <a class="btn btn-info me-2" href="@Url.Action("Edit",new { Id = item.Id })">
+                                <a class="btn btn-info me-2" href="@Url.Action("Upsert",new { Id = item.Id })">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
                                 <form asp-action="Delete" asp-controller="Product" asp-route-Id="@item.Id" method="post" class="d-inline">

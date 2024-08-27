@@ -1,0 +1,69 @@
+﻿@model Category
+
+@{
+    @if (Model?.Id != null)
+    {
+        ViewData["Title"] = "Update Category";
+    }
+    else
+    {
+        ViewData["Title"] = "Create new Category";
+    }
+}
+
+<div class="container">
+    <div class="content m-auto mt-5 p-4 border rounded-3 shadow-sm" style="max-width: 600px;">
+        @if (Model?.Id != null)
+        {
+            <h2 class="mb-4 text-center">Update Category</h2>
+        }
+        else
+        {
+            <h2 class="mb-4 text-center">Create new Category</h2>
+        }
+        <div asp-validation-summary="All"></div>
+        <form asp-action="Upsert">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Category Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Enter category name" required>
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DisplayOrder" class="form-label">Display Order</label>
+                <input asp-for="DisplayOrder" class="form-control" placeholder="Enter display order" required>
+                <span class="text-danger" asp-validation-for="DisplayOrder"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" placeholder="Enter Category Description"><</textarea>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Index", "Category")" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Category
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.tiny.cloud/1/od6loqce43iowee1cc21sjgnv98d50zcn6so0x9aw3u1h35b/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+        });
+    </script>
+}
+

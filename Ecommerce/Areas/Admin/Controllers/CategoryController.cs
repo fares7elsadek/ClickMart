@@ -20,41 +20,36 @@ namespace ClickMart.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Upsert(string? Id)
         {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category)
-        {
-            if (ModelState.IsValid)
+            if(Id == null)
             {
-                _unitOfWork.Category.Add(category);
-                _unitOfWork.Save();
-                TempData["Success"] = "Category Created Successfully";
-                return RedirectToAction("Index");
+                return View();
             }
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult Edit(string Id)
-        {
-            Category category = _unitOfWork.Category.GetOrDefalut(x => x.Id == Id);
-            return View(category);
+            else
+            {
+                Category category = _unitOfWork.Category.GetOrDefalut(x => x.Id == Id);
+                return View(category);
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category category)
+        public IActionResult Upsert(string? Id,Category category)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(category);
-                _unitOfWork.Save();
-                TempData["Success"] = "Category Updated Successfully";
+                if (Id == null)
+                {
+                    _unitOfWork.Category.Add(category);
+                    _unitOfWork.Save();
+                    TempData["Success"] = "Category Created Successfully";
+                }else 
+                {
+                    _unitOfWork.Category.Update(category);
+                    _unitOfWork.Save();
+                    TempData["Success"] = "Category Updated Successfully";
+                }
                 return RedirectToAction("Index");
             }
             return View();

@@ -24,15 +24,32 @@ namespace ClickMart.DataAccess.Repository
 			this.DbSet.Add(entity);
 		}
 
-		public IEnumerable<T> GetAll()
+		public IEnumerable<T> GetAll(string? IncludeProperties = null)
 		{
-			return DbSet.ToList();
+			IQueryable<T> query = this.DbSet;
+			if (!string.IsNullOrEmpty(IncludeProperties))
+			{
+				foreach(var property in IncludeProperties
+					.Split(new char[] { ','} ,StringSplitOptions.RemoveEmptyEntries))
+				{
+                    query = query.Include(property);
+                }
+			}
+			return query.ToList();
 		}
 
-		public T GetOrDefalut(Expression<Func<T, bool>> filter)
+		public T GetOrDefalut(Expression<Func<T, bool>> filter,string? IncludeProperties=null)
 		{
 			IQueryable<T> query = DbSet;
-			query = query.Where(filter);
+            if (!string.IsNullOrEmpty(IncludeProperties))
+            {
+                foreach (var property in IncludeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
+            query = query.Where(filter);
 			return query.FirstOrDefault();
 		}
 

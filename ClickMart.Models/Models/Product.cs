@@ -23,8 +23,9 @@ namespace ClickMart.Models.Models
 
         public string CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
-        public string ImageUrl { get; set; }
+        [DataType(DataType.Upload)]
+        public string? ImageUrl { get; set; }
     }
 }
