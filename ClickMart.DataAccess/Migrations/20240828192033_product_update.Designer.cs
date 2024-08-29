@@ -4,6 +4,7 @@ using ClickMart.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240828192033_product_update")]
+    partial class product_update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,23 +89,45 @@ namespace ClickMart.DataAccess.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar");
 
-                    b.Property<string>("AttributeValue")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("date")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
                     b.ToTable("Attributes", (string)null);
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.AttributesValues", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<string>("AttributeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AttributeValue")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttributeId");
+
+                    b.ToTable("AttributesValues", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Category", b =>
@@ -169,9 +194,7 @@ namespace ClickMart.DataAccess.Migrations
                         .HasColumnType("varchar");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("date");
 
                     b.Property<short>("displayOrder")
                         .HasColumnType("smallint");
@@ -202,7 +225,7 @@ namespace ClickMart.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("date")
                         .HasDefaultValueSql("GETDATE()");
@@ -243,10 +266,8 @@ namespace ClickMart.DataAccess.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("date")
-                        .HasDefaultValueSql("GETDATE()");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
@@ -506,6 +527,17 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.AttributesValues", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Attributes", "Attribute")
+                        .WithMany("AttributeValues")
+                        .HasForeignKey("AttributeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Attribute");
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.Galleries", b =>
                 {
                     b.HasOne("ClickMart.Models.Models.Product", "product")
@@ -623,6 +655,8 @@ namespace ClickMart.DataAccess.Migrations
 
             modelBuilder.Entity("ClickMart.Models.Models.Attributes", b =>
                 {
+                    b.Navigation("AttributeValues");
+
                     b.Navigation("ProductAttributes");
                 });
 

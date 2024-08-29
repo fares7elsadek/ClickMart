@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="~/Ecommerce.styles.css" asp-append-version="true" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <!-- Fontawesome -->
     <link rel="stylesheet" href="~/css/all.min.css" />
@@ -50,84 +53,8 @@
             </div>
         </div>
         <!-- Jumbotron -->
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white">
-            <!-- Container wrapper -->
-            <div class="container justify-content-center justify-content-md-between">
-                <!-- Toggle button -->
-                <button class="navbar-toggler border py-2 text-dark"
-                        type="button"
-                        data-mdb-toggle="collapse"
-                        data-mdb-target="#navbarLeftAlignExample"
-                        aria-controls="navbarLeftAlignExample"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <i class="fas fa-bars"></i>
-                </button>
-
-                <!-- Collapsible wrapper -->
-                <div class="collapse navbar-collapse" id="navbarLeftAlignExample">
-                    <!-- Left links -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" aria-current="page" href="#">Home</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <div class="dropdown">
-                                <button class="nav-link dropdown-toggle text-dark border-0 bg-white" id="navbarDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Admin Content Management
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-area="Admin" asp-action="Index" asp-controller="Category">Categories</a></li>
-                                    <li><a class="dropdown-item" asp-area="Admin" asp-action="Index" asp-controller="Product">Products</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        @* <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Hot offers</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Gift boxes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Projects</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Menu item</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="#">Menu name</a>
-                        </li>
-                        <!-- Navbar dropdown -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-                                Others
-                            </a>
-                            <!-- Dropdown menu -->
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="#">Action</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Another action</a>
-                                </li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Something else here</a>
-                                </li>
-                            </ul>
-                        </li> *@
-                    </ul>
-                    <!-- Left links -->
-                </div>
-            </div>
-            <!-- Container wrapper -->
-        </nav>
-        <!-- Navbar -->
-        
+        @RenderSection("headingSection", false)
+        @RenderSection("ProductHeading",false)
         @RenderSection("Jumbotron",false)
     </header>
     <partial name="_NotificationsPartial" />
@@ -138,6 +65,8 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    @* <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script> *@
     <!-- fontawesome js file -->
     <script src="~/js/all.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

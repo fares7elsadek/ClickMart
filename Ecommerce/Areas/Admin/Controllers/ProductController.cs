@@ -95,7 +95,17 @@ namespace ClickMart.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpPost]
+       
+
+        #region APICALS
+        [HttpGet]
+        public IActionResult GetAllProducts()
+        {
+            List<Product> products = _unitOfWork.Product.GetAll(IncludeProperties:"Category").ToList();
+            return Json(new { data=products });
+        }
+
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(string Id)
         {
@@ -113,13 +123,14 @@ namespace ClickMart.Areas.Admin.Controllers
                 }
                 _unitOfWork.Product.Remove(product);
                 _unitOfWork.Save();
-                TempData["Success"] = "Product Deleted Successfully";
+                return Json(new { success = true, message = "Product deleted successfully" });
             }
             else
             {
-                TempData["Error"] = "Product Not Found";
+                return Json(new { success = false, message = "Error has happened" });
             }
-            return RedirectToAction("Index");
+
         }
+        #endregion
     }
 }

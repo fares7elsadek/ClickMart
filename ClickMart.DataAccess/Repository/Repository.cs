@@ -62,5 +62,20 @@ namespace ClickMart.DataAccess.Repository
 		{
 			DbSet.RemoveRange(entities);
 		}
-	}
+
+        public IEnumerable<T> GetAllWithCondition(Expression<Func<T, bool>> filter, string? IncludeProperties = null)
+        {
+            IQueryable<T> query = DbSet;
+            if (!string.IsNullOrEmpty(IncludeProperties))
+            {
+                foreach (var property in IncludeProperties
+                    .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
+            query = query.Where(filter);
+			return query;
+        }
+    }
 }
