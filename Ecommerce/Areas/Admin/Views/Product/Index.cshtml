@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Manage Products";
 }
+@Html.AntiForgeryToken()
 
 <div class="container">
     <div class="content m-auto mt-5" style="width: 80%;">
@@ -13,7 +14,7 @@
             </a>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover align-middle text-center">
+            <table id="datatable" class="table table-hover align-middle text-center" style="width:100%">
                 <thead class="table-light">
                     <tr>
                         <th scope="col">Product Title</th>
@@ -22,27 +23,15 @@
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.Title</td>
-                            <td>@item.Price.ToString("C")</td>
-                            <td>@item?.Category?.Name</td>
-                            <td>
-                                <a class="btn btn-info me-2" href="@Url.Action("Upsert",new { Id = item.Id })">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <form asp-action="Delete" asp-controller="Product" asp-route-Id="@item.Id" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
+               
             </table>
         </div>
     </div>
 </div>
+
+@section Scripts{    
+    <script src="~/js/product/datatables.js"></script>
+}
+@section headingSection {
+    <partial name="_CollapseWrapperPartial" />
+}

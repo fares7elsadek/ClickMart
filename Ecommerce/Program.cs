@@ -4,6 +4,7 @@ using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace ClickMart
 {
@@ -26,8 +27,12 @@ namespace ClickMart
 				.AddEntityFrameworkStores<AppDbContext>();
 
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-			var app = builder.Build();
+
+
+            var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())

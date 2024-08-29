@@ -27,6 +27,9 @@ namespace ClickMart.DataAccess.Repository
                 newProduct.Description = product.Description;
                 newProduct.Title = product.Title;
                 newProduct.CategoryId = product.CategoryId;
+                newProduct.ShortDescription = product.ShortDescription;
+                newProduct.DiscountPrice = product.DiscountPrice;
+                newProduct.Published = product.Published;
                 if(product.ImageUrl != null)
                 {
                     newProduct.ImageUrl = product.ImageUrl;

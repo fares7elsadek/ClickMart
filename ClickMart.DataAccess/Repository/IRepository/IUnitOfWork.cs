@@ -10,6 +10,8 @@ namespace ClickMart.DataAccess.Repository.IRepository
     {
         ICategoryRepository Category { get; }
         IProductRepository Product { get; }
+
+        IAttributesRepository Attributes { get; }
         void Save();
     }
 }
