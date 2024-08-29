@@ -4,7 +4,7 @@
     var isEditMode = Model?.Id != null;
     ViewData["Title"] = isEditMode ? "Update Product" : "Create New Product";
 }
-
+@Html.AntiForgeryToken()
 <div class="container">
     <div class="row justify-content-center mt-5">
         <div class="col-lg-8">
@@ -13,6 +13,7 @@
                     <h3 class="card-title mb-0 text-center">@ViewData["Title"]</h3>
                 </div>
                 <div class="card-body p-4">
+                    <input type="hidden" id="productId" value="@Model?.Id" />
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
                     <form asp-action="Upsert" enctype="multipart/form-data">
                         <input asp-for="ImageUrl" type="hidden" />
@@ -115,13 +116,13 @@
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col">Attribute</th>
-                                    <th scope="col">Id</th>
+                                    <th scope="col">Actions</th>
                                 </tr>
                             </thead>
                         </table>
                     </div>
                     <div class="d-flex justify-content-end p-3">
-						    <a class="btn btn-primary rounded-pill d-flex align-items-center" style="width:fit-content" href="@Url.Action("Upsert","Attributes")">
+						    <a class="btn btn-primary rounded-pill d-flex align-items-center" style="width:fit-content" asp-action="Create" asp-controller="Attributes" asp-route-productId="@Model.Id">
 							    <i class="bi bi-plus-circle me-2"></i> Create New Attribute
 						    </a>
                     </div>

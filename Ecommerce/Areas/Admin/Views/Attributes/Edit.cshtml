@@ -1,7 +1,6 @@
 ﻿@model Attributes
 @{
-    var isEditMode = Model?.Id != null;
-    ViewData["Title"] = isEditMode ? "Update Attribute" : "Create New Attribute";
+    ViewData["Title"] = "Update Attribute";
 }
 
 <div class="container">
@@ -13,7 +12,7 @@
                 </div>
                 <div class="card-body p-4">
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
-                    <form asp-action="Upsert">
+                    <form asp-action="Edit">
                         <div class="mb-3">
                             <label asp-for="AttributeName" class="form-label">Attribute Name</label>
                             <input asp-for="AttributeName" class="form-control" placeholder="Enter attribute name" required />
@@ -24,11 +23,10 @@
                             <input asp-for="AttributeValue" class="form-control" placeholder="Enter attribute value" required />
                             <span class="text-danger" asp-validation-for="AttributeValue"></span>
                         </div>
-
-
                         <div class="mb-3">
-                            <label asp-for="Products" class="form-label">Products</label>
-                            <select asp-for="Products" asp-items="@ViewBag.Products" class="form-select" required>
+                            <label for="product" class="form-label">Products</label>
+                            <select id="product" name="productId" asp-items="@ViewBag.Products" class="form-select" required>
+                                <option disabled selected>--Select Product--</option>
                             </select>
                             <span class="text-danger" asp-validation-for="Products"></span>
                         </div>
@@ -37,7 +35,7 @@
                                 <i class="bi bi-arrow-left"></i> Back to List
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Save Product
+                                <i class="bi bi-save"></i> Save Attribute
                             </button>
                         </div>
                     </form>
@@ -46,3 +44,4 @@
         </div>
     </div>
 </div>
+

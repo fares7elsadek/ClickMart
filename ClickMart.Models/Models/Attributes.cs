@@ -8,7 +8,7 @@ namespace ClickMart.Models.Models
 {
     public class Attributes
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         public string AttributeName { get; set; }
 

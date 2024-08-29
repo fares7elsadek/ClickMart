@@ -48,8 +48,9 @@ namespace ClickMart.DataAccess.Data.config
                 .IsRequired();
 
             builder.Property(x => x.ShortDescription).
-                HasColumnType("varchar")
-                .HasMaxLength(200).IsRequired();
+                HasColumnType("text")
+                .IsRequired();
+                
 
             builder.Property(x => x.Published).
                HasColumnType("bit").

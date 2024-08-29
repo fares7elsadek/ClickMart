@@ -1,5 +1,6 @@
 ﻿using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -14,7 +15,7 @@ namespace ClickMart.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
         [HttpGet]
-        public IActionResult Upsert(string? Id,string? productId)
+        public IActionResult Create(string productId)
         {
             IEnumerable<SelectListItem> Products = _unitOfWork.Product.GetAll().Select(x =>
                 new SelectListItem
@@ -24,60 +25,82 @@ namespace ClickMart.Areas.Admin.Controllers
                     Selected = x.Id == productId
                 });
             ViewBag.Products = Products;
-            if (!string.IsNullOrEmpty(productId))
-            {
-                ViewBag.ProductId = productId;
-            }
-            if (Id == null)
-            {
-                return View();
-            }
-            else
-            {
-                var Attribute = _unitOfWork.Attributes.GetOrDefalut(a => a.Id == Id);
-                return View(Attribute);
-            }
+            ViewBag.productId = productId;
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Upsert(string? Id,Attributes attributes)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Attributes attribute,string productId)
         {
             if (ModelState.IsValid)
             {
-                if (Id == null)
-                {
-                    _unitOfWork.Attributes.Add(attributes);
-                    _unitOfWork.Save();
-                    TempData["Success"] = "Attribute Created Successfully";
-                    return RedirectToAction("Upsert", "Product");
-                }
-                else
-                {
-                    _unitOfWork.Attributes.Update(attributes);
-                    _unitOfWork.Save();
-                    TempData["Success"] = "Attribute Updated Successfully";
-                    return RedirectToAction("Upsert", "Product", new { Id });
-                }
+                var product = _unitOfWork.Product.GetOrDefalut(p => p.Id == productId);
+                attribute.Products.Add(product);
+                _unitOfWork.Attributes.Add(attribute);
+                _unitOfWork.Save();
+                TempData["Success"] = "Attribute Created Successfully";
+                return RedirectToAction("Upsert","Product",new { Id=productId });
             }
-            if(Id == null)
+            return View(attribute);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(string Id,string productId)
+        {
+            var attribute = _unitOfWork.Attributes.GetOrDefalut(a => a.Id == Id);
+            IEnumerable<SelectListItem> products = _unitOfWork.Product.GetAll().Select(x =>
+                    new SelectListItem
+                    {
+                        Text = x.Title,
+                        Value = x.Id,
+                        Selected = x.Id == productId
+                    });
+            ViewBag.Products = products;
+            ViewBag.productId = productId;
+            return View(attribute);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Attributes attribute,string productId)
+        {
+            if (ModelState.IsValid)
             {
-                return RedirectToAction("Upsert","Product");
+                var product = _unitOfWork.Product.GetOrDefalut(p => p.Id == productId);
+                attribute.Products.Add(product);
+                _unitOfWork.Attributes.Update(attribute);
+                _unitOfWork.Save();
+                TempData["Success"] = "Attribute Updated Successfully";
+                return RedirectToAction("Upsert", "Product", new { Id = productId });
             }
-            else
-            {
-                return RedirectToAction("Upsert", "Product", new { Id });
-            }
-           
+            return View(attribute);
         }
 
         #region APICALLS
         [HttpGet]
-        public IActionResult GetAllAttributes()
+        public IActionResult GetAllAttributes(string Id)
         {
-            var Attributes = _unitOfWork.Attributes.GetAll().ToList();
-            return Json(new { data = Attributes });
+            var product = _unitOfWork.Product.GetOrDefalut( p => p.Id == Id,
+                IncludeProperties: "Attributes");
+            return Json(new { data = product.Attributes });
         }
+        [HttpDelete]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(string Id)
+        {
+            Attributes attribute = _unitOfWork.Attributes.GetOrDefalut(x => x.Id == Id);
+            if (attribute != null)
+            {
+                _unitOfWork.Attributes.Remove(attribute);
+                _unitOfWork.Save();
+                return Json(new { success = true, message = "Attribute deleted successfully" });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Error has happened" });
+            }
 
+        }
         #endregion
     }
 }

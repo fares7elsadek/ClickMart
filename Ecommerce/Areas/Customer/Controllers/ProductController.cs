@@ -16,7 +16,7 @@ namespace ClickMart.Areas.Customer.Controllers
         [HttpGet]
         public IActionResult Details(string Id)
         {
-            var product = _unitOfWork.Product.GetOrDefalut(p => p.Id == Id, IncludeProperties: "Category");
+            var product = _unitOfWork.Product.GetOrDefalut(p => p.Id == Id, IncludeProperties: "Category,Attributes");
             List<Product> SameCategoryProducts = _unitOfWork.Product.GetAllWithCondition(p => (p.CategoryId == product.CategoryId && p.Id !=product.Id)).ToList();
             ProductDeatailsViewModel viewModel = new ProductDeatailsViewModel();
             viewModel.product = product;
