@@ -1,0 +1,49 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+@section headingSection{
+    <!-- Heading -->
+    <div class="bg-primary">
+        <div class="container py-4">
+            <!-- Breadcrumb -->
+            <nav class="d-flex">
+                <h6 class="mb-0">
+                    <a href="" class="text-white-50">Home</a>
+                    <span class="text-white-50 mx-2"> > </span>
+                    <a href="" class="text-white-50">Profile</a>
+                </h6>
+            </nav>
+            <!-- Breadcrumb -->
+        </div>
+    </div>
+    <!-- Heading -->
+}
+
+
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-xl-3">
+                <nav class="nav flex-lg-column w-100 d-flex nav-pills mb-4">
+                    <partial name="_ManageNav" />
+                </nav>
+            </div>
+            <main class="col-lg-9 col-xl-9">
+                    @RenderBody()
+            </main>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

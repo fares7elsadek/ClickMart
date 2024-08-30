@@ -23,6 +23,8 @@ namespace ClickMart
 				options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
 			});
 
+   
+
 			builder.Services.AddRazorPages();
 
 

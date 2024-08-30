@@ -1,0 +1,27 @@
+﻿@using ClickMart.Models.Models
+@inject SignInManager<User> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<a class="nav-link my-0 @ManageNavPages.IndexNavClass(ViewContext)" asp-page="./Index">
+    <p class="pb-0 mb-0" style="width: 100px">Account main</p>
+</a>
+<a class="nav-link my-0 @ManageNavPages.EmailNavClass(ViewContext)" asp-page="./Email">
+    <p class="pb-0 mb-0" style="width: 100px">Email</p>
+</a>
+<a class="nav-link my-0 @ManageNavPages.ChangePasswordNavClass(ViewContext)" asp-page="./ChangePassword">
+    <p class="pb-0 mb-0" style="width: 100px">Password</p>
+</a>
+@if (hasExternalLogins)
+{
+    <a class="nav-link my-0 @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">
+        <p class="pb-0 mb-0" style="width: 100px">External logins</p>
+    </a>
+}
+<a class="nav-link my-0 @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" asp-page="./TwoFactorAuthentication">
+    <p class="pb-0 mb-0" style="width: 100px">Two-factor authentication</p>
+</a>
+<a class="nav-link my-0 @ManageNavPages.PersonalDataNavClass(ViewContext)" asp-page="./PersonalData">
+    <p class="pb-0 mb-0" style="width: 100px">Personal data</p>
+</a>

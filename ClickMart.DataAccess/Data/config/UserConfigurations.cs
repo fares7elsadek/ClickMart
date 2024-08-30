@@ -8,7 +8,17 @@ namespace ClickMart.DataAccess.Data.config
 	{
 		public void Configure(EntityTypeBuilder<User> builder)
 		{
-			builder.HasMany(u => u.Address)
+			builder.Property(u => u.FirstName)
+				.HasColumnType("varchar")
+				.HasMaxLength(128)
+				.IsRequired();
+
+            builder.Property(u => u.LastName)
+                .HasColumnType("varchar")
+                .HasMaxLength(128)
+                .IsRequired();
+
+            builder.HasMany(u => u.Address)
 				.WithOne(u => u.User)
 				.HasForeignKey(u => u.UserId)
 				.OnDelete(DeleteBehavior.Cascade);
