@@ -1,0 +1,74 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login Page</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link href="~/css/Account.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="d-flex justify-content-center mb-1 mt-3">
+		<img class="img-fluid" src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png" height="35" />
+	</div>
+	<div class="container mt-5 border border-info-subtle rounded p-3">
+		<div class="row">
+			<div class="panel panel-primary">
+				<div class="panel-body">
+					<form id="account" method="post">
+						<div class="form-group mb-3">
+							<h2>Sign in</h2>
+						</div>
+						<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+						<div class="form-group mb-3">
+							<label asp-for="Input.Email" class="form-label">Email or username</label>
+							<input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Email or username" />
+							<span asp-validation-for="Input.Email" class="text-danger"></span>
+						</div>
+						<div class="form-group mb-3">
+							<label asp-for="Input.Password" class="form-label">Password</label>
+							<span class="right"><a asp-page="./ForgotPassword">Forgot your password?</a></span>
+							<input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+							<span asp-validation-for="Input.Password" class="text-danger"></span>
+						</div>
+						<div class="checkbox mb-3">
+							<label asp-for="Input.RememberMe" class="form-label">
+								<input class="form-check-input" asp-for="Input.RememberMe" />
+								@Html.DisplayNameFor(m => m.Input.RememberMe)
+							</label>
+						</div>
+						<div class="form-group" style="padding-top: 12px;">
+							<button id="signinSubmit" type="submit" class="btn btn-success btn-block">Sign in</button>
+						</div>
+						<div class="form-group divider mb-3">
+							<hr class="left"><small>New to site?</small><hr class="right">
+						</div>
+						<p class="form-group"><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-info btn-block">Create an account</a></p>
+						<p class="form-group">By signing in you are agreeing to our <a href="#">Terms of Use</a> and our <a href="#">Privacy Policy</a>.</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr class="line" />
+	<div class="d-flex flex-row justify-content-center footer_1 mt-2">
+		<div class="row">
+			<div class="col">
+				<p class="conditions"><a>Conditions of Use &nbsp &nbsp &nbsp </a>   <a>Privacy Notice&nbsp &nbsp &nbsp </a>   <a>Help&nbsp &nbsp &nbsp </a></p>
+				<p class="copy-right">&copy; 2024 ClickMart. All rights reserved.</p>
+			</div>
+		</div>
+	</div>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<partial name="_ValidationScriptsPartial" />
+</body>
+</html>
