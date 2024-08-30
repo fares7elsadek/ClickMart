@@ -23,8 +23,13 @@ namespace ClickMart
 				options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
 			});
 
-			builder.Services.AddIdentity<User, IdentityRole>()
-				.AddEntityFrameworkStores<AppDbContext>();
+			builder.Services.AddRazorPages();
+
+
+			builder.Services.AddIdentity<User,IdentityRole>()
+				.AddEntityFrameworkStores<AppDbContext>()
+				.AddDefaultUI()
+				.AddDefaultTokenProviders();
 
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
             builder.Services.AddControllers().AddJsonOptions(x =>
@@ -49,10 +54,7 @@ namespace ClickMart
 
 			app.UseAuthorization();
 
-			//app.MapControllerRoute(
-			//	name: "default",
-			//	pattern: "{area:Admin}/{controller=Home}/{action=Index}/{id?}");
-
+			app.MapRazorPages();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
