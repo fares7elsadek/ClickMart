@@ -14,6 +14,9 @@ namespace ClickMart.DataAccess.Repository
         public ICategoryRepository Category { get; private set; }
         public IProductRepository Product { get; private set; }
         public IAttributesRepository Attributes { get; private set; }
+
+        public ICountryRepository Countries { get; private set; }
+
         private AppDbContext _db;
         public UnitOfWork(AppDbContext db)
         {
@@ -21,6 +24,7 @@ namespace ClickMart.DataAccess.Repository
             Category = new CategoryRepository(this._db);
             Product = new ProductRepository(this._db);
             Attributes = new AttributesRepository(this._db);
+            Countries = new CountryRepository(this._db);
         }
         public void Save()
         {

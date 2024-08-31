@@ -18,10 +18,15 @@ namespace ClickMart.DataAccess.Data.config
                 .HasMaxLength(128)
                 .IsRequired();
 
-            builder.HasMany(u => u.Address)
-				.WithOne(u => u.User)
-				.HasForeignKey(u => u.UserId)
-				.OnDelete(DeleteBehavior.Cascade);
-		}
+			builder.HasMany(u => u.AddressList)
+				.WithMany(u => u.users)
+				.UsingEntity<UserAddress>();
+
+
+            builder.Property(u => u.avatar)
+                .HasColumnType("varchar")
+                .HasMaxLength(255)
+                .HasDefaultValue("");
+        }
 	}
 }

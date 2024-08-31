@@ -1,21 +1,28 @@
 ﻿@page
 @model IndexModel
+@using ClickMart.DataAccess.Repository.IRepository
+@inject UserManager<User> UserManager
+
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
+
 }
 
+
+<partial name="_StatusMessage" for="StatusMessage" />
 <div class="card p-4 mb-0 shadow-0 border">
     <div class="content-body">
         <div class="d-flex align-items-center">
             <div class="me-3">
-                <img src="https://mdbootstrap.com/img/bootstrap-ecommerce/avatars/avatar.webp" class="rounded-circle" style="height: 60px; width: 60px;" />
+                <img src="@(string.IsNullOrEmpty(Model.avatar) ? "/Images/User/Default/avatar.webp" : "/" + Model.avatar )" class="rounded-circle" style="height: 60px; width: 60px;" />
             </div>
             <div class="pt-2">
-                <h6 class="pt-2">Mr. Jackson Mike</h6>
+                
+                <h6 class="pt-2">Mr. @Model.FirstName @Model.LastName</h6>
                 <p>
-                    Email: myusername@gmail.com, Phone: +1234567890988
-                    <a href="#" class="px-2"><i class="fa fa-pen"></i></a>
+                    Email: @Model.Email, Phone: @Model.PhoneNumber
+                    <button type="button" class="px-2" data-bs-toggle="modal" data-bs-target="#UserDataModal"><i class="fa fa-pen"></i></button>
                 </p>
             </div>
         </div>
@@ -37,7 +44,9 @@
             </div>
         </div>
 
-        <a href="#" class="btn btn-light border"> <i class="me-2 fa fa-plus"></i> Add new address </a>
+      
+
+        <a href="/Customer/address/add" class="btn btn-light border"> <i class="me-2 fa fa-plus"></i> Add new address </a> 
 
         <hr class="my-4" />
 
@@ -192,3 +201,52 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade" id="UserDataModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="UserDataModalLabel">Update Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profile-form" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <!-- Profile Photo -->
+                    <div class="mb-3 text-center">
+                        <img id="profileImagePreview" src="https://mdbootstrap.com/img/bootstrap-ecommerce/avatars/avatar.webp"
+                             class="rounded-circle mb-3" style="height: 100px; width: 100px;" />
+                        <input type="file" asp-for="avatar" id="profileImageUpload" class="form-control" accept="image/*" onchange="document.getElementById('profileImagePreview').src=window.URL.createObjectURL(this.files[0])" />
+                    </div>
+
+                    <!-- First Name -->
+                    <div class="mb-3">
+                        <label asp-for="Input.FirstName" class="form-label">First Name</label>
+                        <input asp-for="Input.FirstName" class="form-control" />
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="mb-3">
+                        <label asp-for="Input.LastName" class="form-label">Last Name</label>
+                        <input asp-for="Input.LastName" class="form-control" />
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="mb-3">
+                        <label asp-for="Input.PhoneNumber" class="form-label">Phone Number</label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" />
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+

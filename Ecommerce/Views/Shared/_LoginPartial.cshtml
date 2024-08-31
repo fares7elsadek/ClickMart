@@ -7,7 +7,10 @@
     {
         <div class="d-flex align-items-center me-3">
             <a id="manage" class="nav-link text-dark d-flex align-items-center" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-                <i class="fas fa-user-alt m-1 me-md-2"></i>
+                @if (!string.IsNullOrEmpty(@UserManager.GetUserAsync(User).Result?.avatar))
+                {
+                    <img class="rounded-circle me-1" style="height:30px;width:30px" src="/@UserManager.GetUserAsync(User).Result?.avatar" alt="profile" />
+                }
                 <span class="d-none d-md-inline">Hello, @UserManager.GetUserName(User)!</span>
             </a>
         </div>

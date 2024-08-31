@@ -3,13 +3,19 @@
 #nullable disable
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Loader;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ClickMart.Areas.Identity.Pages.Account.Manage
 {
@@ -17,13 +23,19 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IUnitOfWork _unitOfWork;
 
         public IndexModel(
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            IWebHostEnvironment webHostEnvironment,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _webHostEnvironment = webHostEnvironment;
+            this._unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -31,6 +43,17 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string Username { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string Email { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string avatar {  get; set; }
+
+       
+        
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -59,18 +82,37 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Required]
+            [Display(Name = "First Name")]
+            [MaxLength(120)]
+            public string FirstName { get; set;}
+
+            [Required]
+            [Display(Name = "Last Name")]
+            [MaxLength(120)]
+            public string LastName { get; set; }
         }
+
+        
 
         private async Task LoadAsync(User user)
         {
-            var userName = await _userManager.GetUserNameAsync(user);
-            var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var userData = await _userManager.GetUserAsync(User);
+            
 
-            Username = userName;
+            Username = userData.UserName;
+            FirstName = userData.FirstName;
+            LastName = userData.LastName;
+            PhoneNumber = userData.PhoneNumber;
+            Email = userData.Email;
+            avatar = userData.avatar;
+
+           
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = userData.PhoneNumber,
             };
         }
 
@@ -111,9 +153,74 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            bool updateNeeded = false;
+
+            // FirstName
+            if (user.FirstName != Input.FirstName)
+            {
+                user.FirstName = Input.FirstName;
+                updateNeeded = true;
+            }
+
+            // LastName
+            if (user.LastName != Input.LastName)
+            {
+                user.LastName = Input.LastName;
+                updateNeeded = true;
+            }
+
+            // Avatar upload
+            if (Request.Form.Files.Count > 0)
+            {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                var file = Request.Form.Files.FirstOrDefault();
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                string avatarPath = Path.Combine(wwwRootPath, "Images", "User", "avatar");
+
+                // Create directory if it doesn't exist
+                if (!Directory.Exists(avatarPath))
+                {
+                    Directory.CreateDirectory(avatarPath);
+                }
+
+                // Delete old avatar if exists
+                if (!string.IsNullOrEmpty(user.avatar))
+                {
+                    var oldImagePath = Path.Combine(wwwRootPath, user.avatar);
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                // Save new avatar
+                using (var fileStream = new FileStream(Path.Combine(avatarPath, fileName), FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+                user.avatar = Path.Combine("Images", "User", "avatar", fileName).Replace("\\", "/");
+                updateNeeded = true;
+            }
+
+            
+
+            // Update user data if necessary
+            if (updateNeeded)
+            {
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to update the user.";
+                    return RedirectToPage();
+                }
+            }
+
+            
+
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }
+
     }
 }

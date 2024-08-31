@@ -12,6 +12,7 @@ namespace ClickMart.DataAccess.Repository.IRepository
         IProductRepository Product { get; }
 
         IAttributesRepository Attributes { get; }
+        ICountryRepository Countries { get; }
         void Save();
     }
 }

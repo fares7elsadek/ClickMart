@@ -338,6 +338,12 @@ namespace ClickMart.DataAccess.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("avatar")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar")
+                        .HasDefaultValue("");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
