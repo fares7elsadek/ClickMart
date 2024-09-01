@@ -18,9 +18,10 @@ namespace ClickMart.DataAccess.Data.config
                 .HasMaxLength(128)
                 .IsRequired();
 
-			builder.HasMany(u => u.AddressList)
-				.WithMany(u => u.users)
-				.UsingEntity<UserAddress>();
+			builder.HasMany(u => u.Addresses)
+				.WithOne(u => u.User)
+				.HasForeignKey(u => u.UserId)
+				.OnDelete(DeleteBehavior.Cascade);
 
 
             builder.Property(u => u.avatar)

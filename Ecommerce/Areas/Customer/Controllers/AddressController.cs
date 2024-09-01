@@ -1,5 +1,7 @@
 ﻿using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
+using ClickMart.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace ClickMart.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_Customer},{SD.Role_Employee}")]
     public class AddressController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -37,12 +40,10 @@ namespace ClickMart.Areas.Customer.Controllers
             if (!ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(User);
-                UserAddress userAddress = new UserAddress()
-                {
-                    Address = address,
-                    User = user
-                };
-                user.Address.Add(userAddress);
+                var UserData = _unitOfWork.Users.GetOrDefalut(u => u.Id == user.Id
+                , IncludeProperties: "Addresses");
+                UserData.Addresses.Add(address);
+                user = UserData;
                 await _userManager.UpdateAsync(user);
                 return LocalRedirect("/Identity/Account/Manage");
             }

@@ -37,6 +37,12 @@ namespace ClickMart
             builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+			builder.Services.ConfigureApplicationCookie(option =>
+			{
+				option.LogoutPath = "/Identity/Account/Login";
+				option.LogoutPath = "/Identity/Account/logout";
+				option.AccessDeniedPath = "/Identity/Account/AccessDenied";
+			});
 
 
             var app = builder.Build();

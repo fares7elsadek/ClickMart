@@ -8,7 +8,6 @@ namespace ClickMart.Models.Models
 		public string LastName { get; set; }
 
 		public string? avatar {  get; set; }
-		public List<UserAddress> Address { get; set; } = new List<UserAddress>();
-		public List<Address> AddressList { get; set; } = new List<Address>();
+		public List<Address> Addresses { get; set; } = new List<Address>();
 	}
 }

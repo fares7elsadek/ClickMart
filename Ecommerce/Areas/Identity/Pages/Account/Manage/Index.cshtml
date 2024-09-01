@@ -29,19 +29,18 @@
 
         <hr />
 
+       
+
         <div class="row g-2 mb-3">
-            <div class="col-md-6">
-                <div class="border p-3 rounded-3 bg-light">
-                    <b class="mx-2 text-muted"><i class="fa fa-map-marker-alt"></i></b>
-                    United States, 3601 Old Capitol Trail, Unit A-7, Suite
+            @foreach (var address in ViewBag.Addresses)
+            {
+                <div class="col-md-6">
+                    <div class="border p-3 rounded-3 bg-light">
+                        <b class="mx-2 text-muted"><i class="fa fa-map-marker-alt"></i></b>
+                        @address
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="border p-3 rounded-3 bg-light">
-                    <b class="mx-2 text-muted"><i class="fa fa-map-marker-alt"></i></b>
-                    Moscow city, Street name, Building lenin, House 77
-                </div>
-            </div>
+            }
         </div>
 
       

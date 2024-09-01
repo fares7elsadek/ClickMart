@@ -33,8 +33,9 @@ namespace ClickMart.Models.Models
 
 		public string CountryId { get; set; }
 
+		public bool IsDefault { get; set; }
 		public Country Country { get; set; }
-		public List<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
-		public List<User> users { get; set; } = new List<User>();
+		public string UserId { get; set; }
+		public User User { get; set; }
 	}
 }

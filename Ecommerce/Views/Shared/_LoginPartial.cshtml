@@ -6,6 +6,12 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div class="d-flex align-items-center me-3">
+            @if (User.IsInRole(SD.Role_Admin))
+            {
+                <a asp-action="Dashboard" asp-controller="AdminPanel" asp-area="Admin" class="btn btn-primary px-2 py-2 rounded-pill shadow-sm me-2" type="button">
+                    <i class="bi bi-gear me-2"></i> Admin Panel
+                </a>
+            }
             <a id="manage" class="nav-link text-dark d-flex align-items-center" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
                 @if (!string.IsNullOrEmpty(@UserManager.GetUserAsync(User).Result?.avatar))
                 {

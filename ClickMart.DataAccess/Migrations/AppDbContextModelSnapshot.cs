@@ -47,6 +47,9 @@ namespace ClickMart.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasMaxLength(5)
@@ -67,9 +70,15 @@ namespace ClickMart.DataAccess.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("varchar");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Addresses", (string)null);
                 });
@@ -354,27 +363,7 @@ namespace ClickMart.DataAccess.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("ClickMart.Models.Models.UserAddress", b =>
-                {
-                    b.Property<string>("AddressId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsDefault")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.HasKey("AddressId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserAddresses", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -401,7 +390,7 @@ namespace ClickMart.DataAccess.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -426,7 +415,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -451,7 +440,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -473,7 +462,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -488,7 +477,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -507,7 +496,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Address", b =>
@@ -518,7 +507,15 @@ namespace ClickMart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ClickMart.Models.Models.User", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Country");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Galleries", b =>
@@ -561,25 +558,6 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("attribute");
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.UserAddress", b =>
-                {
-                    b.HasOne("ClickMart.Models.Models.Address", "Address")
-                        .WithMany("UserAddresses")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClickMart.Models.Models.User", "User")
-                        .WithMany("Address")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -631,11 +609,6 @@ namespace ClickMart.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.Address", b =>
-                {
-                    b.Navigation("UserAddresses");
-                });
-
             modelBuilder.Entity("ClickMart.Models.Models.Attributes", b =>
                 {
                     b.Navigation("ProductAttributes");
@@ -660,7 +633,7 @@ namespace ClickMart.DataAccess.Migrations
 
             modelBuilder.Entity("ClickMart.Models.Models.User", b =>
                 {
-                    b.Navigation("Address");
+                    b.Navigation("Addresses");
                 });
 #pragma warning restore 612, 618
         }

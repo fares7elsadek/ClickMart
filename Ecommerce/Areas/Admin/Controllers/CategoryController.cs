@@ -2,10 +2,14 @@
 using ClickMart.DataAccess.Repository;
 using ClickMart.Models.Models;
 using ClickMart.DataAccess.Repository.IRepository;
+using ClickMart.Utility;
+using Microsoft.AspNetCore.Authorization;
+using ClickMart.DataAccess.Migrations;
 
 namespace ClickMart.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -73,5 +77,14 @@ namespace ClickMart.Areas.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+
+        #region APICALLS
+        [HttpGet]
+        public IActionResult GetAllCategories()
+        {
+            var Categories = _unitOfWork.Category.GetAll().ToList();
+            return Json(new { data = Categories });
+        }
+        #endregion
     }
 }

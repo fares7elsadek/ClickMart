@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using ClickMart.DataAccess.Data.config;
 using ClickMart.Models.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace ClickMart.DataAccess.Data
 {
@@ -12,7 +13,6 @@ namespace ClickMart.DataAccess.Data
 		public DbSet<Address> Address { get; set; }
 		public DbSet<User> Users { get; set; }
 		public DbSet<Country> Countries { get; set; }
-		public DbSet<UserAddress> UserAddresses { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Product> Products { get; set; }
 		public DbSet<Galleries> Galleries { get; set; }
@@ -31,6 +31,13 @@ namespace ClickMart.DataAccess.Data
 			base.OnModelCreating(builder);
 			builder.ApplyConfigurationsFromAssembly(typeof(UserConfigurations)
 				.Assembly);
-		}
+			builder.Entity<User>().ToTable("Users");
+			builder.Entity<IdentityRole>().ToTable("Roles");
+			builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+			builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+			builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+			builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+			builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+        }
 	}
 }

@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Runtime.Loader;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -51,6 +52,8 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
         public string PhoneNumber { get; set; }
 
         public string avatar {  get; set; }
+
+        public List<string> Addresses { get; set; }
 
        
         
@@ -108,7 +111,19 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
             Email = userData.Email;
             avatar = userData.avatar;
 
-           
+            var userAddresses = _unitOfWork.Users.GetUserWithAddresses(u => u.Id == userData.Id)
+                .Addresses;
+
+
+
+
+            Addresses = userAddresses
+                .Select(address => $"{address.Country?.Name ?? "Unknown Country"}, {address.City}, {address.AddressLine1}, {address.UnitNumber}")
+                .ToList();
+
+            ViewData["Addresses"] = Addresses;
+
+
 
             Input = new InputModel
             {
