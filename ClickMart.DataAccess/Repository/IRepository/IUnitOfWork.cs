@@ -18,6 +18,8 @@ namespace ClickMart.DataAccess.Repository.IRepository
         IUserRepository Users { get; }
 
         IReviewRepository Reviews { get; }
+
+        ICompanyRepository Company { get; }
         void Save();
     }
 }

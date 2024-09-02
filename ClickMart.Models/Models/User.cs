@@ -11,5 +11,9 @@ namespace ClickMart.Models.Models
 		public List<Address> Addresses { get; set; } = new List<Address>();
 
 		public List<Reviews> Reviews { get; set; } = new List<Reviews>();
+
+		public string? CompanyId { get; set; }
+
+		public Company Company { get; set; }
 	}
 }
