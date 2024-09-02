@@ -199,7 +199,7 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
                 }
 
                 // Delete old avatar if exists
-                if (!string.IsNullOrEmpty(user.avatar))
+                if (!string.IsNullOrEmpty(user.avatar) && user.avatar!= "Images/User/Default/avatar.webp")
                 {
                     var oldImagePath = Path.Combine(wwwRootPath, user.avatar);
                     if (System.IO.File.Exists(oldImagePath))

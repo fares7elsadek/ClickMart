@@ -1,35 +1,27 @@
-﻿var dataTable;
+﻿var CategoryDataTable;
 $(document).ready(function () {
-    loadDataTable();
+    loadCategoryDataTable();
 });
 
-function loadDataTable() {
-    dataTable = $('#datatable').DataTable({
-        "ajax": { url: '/Admin/Product/getallproducts' },
+function loadCategoryDataTable() {
+    CategoryDataTable = $('#CategoryDataTable').DataTable({
+        "ajax": { url: '/Admin/Category/GetAllCategories' },
         "columns": [
-            { data: "title", "width": "30%" },
-            { data: "price", "width": "15%" },
-            { data: "category.name", "width": "20%" },
-            {
-                data: "published",
-                "render": function (data) {
-                    return data ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Not Active</span>';
-                },
-                "width": "10%"
-            },
+            { data: "name", "width": "30%" },
+            { data: "displayOrder", "width": "30%" },
             {
                 data: "id",
                 "render": function (data) {
                     return `
-                         <a class="btn btn-info me-2" href="/Admin/Product/Upsert/${data}">
+                         <a class="btn btn-info me-2" href="/Admin/Category/Upsert/${data}">
                               <i class="bi bi-pencil-square"></i> Edit
                          </a>
-                        <a onClick=Delete('/Admin/Product/Delete/${data}') class="btn btn-danger">
+                        <a onClick=Delete('/Admin/Category/Delete/${data}') class="btn btn-danger">
                             <i class="bi bi-trash"></i> Delete
                         </a>
                     `;
                 },
-                "width": "20%"
+                "width": "40%"
             }
         ]
     });
@@ -55,7 +47,7 @@ function Delete(url) {
                 },
                 success: function (data) {
                     if (data.success) {
-                        dataTable.ajax.reload();
+                        CategoryDataTable.ajax.reload();
                         toastr.success(data.message);
                     } else {
                         toastr.error(data.message);

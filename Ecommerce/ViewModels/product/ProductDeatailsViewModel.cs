@@ -6,5 +6,8 @@ namespace ClickMart.ViewModels.product
     {
         public Product product { get; set; }
         public List<Product> SameCategoryProducts { get; set; }
+
+        public List<Reviews> reviews { get; set; }
+
     }
 }

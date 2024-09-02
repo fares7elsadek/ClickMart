@@ -143,3 +143,11 @@
     </script>
     <script src="~/js/Attributes/Datatables.js"></script>
 }
+
+@section Navbar {
+    <partial name="_NavbarPartial" model="@ViewBag.User" />
+}
+
+@section Sidebar {
+    <partial name="_SidbarPartial" model="@ViewBag.User" />
+}

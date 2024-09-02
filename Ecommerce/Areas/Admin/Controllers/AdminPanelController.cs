@@ -20,11 +20,7 @@ namespace ClickMart.Areas.Admin.Controllers
             _userManager = userManager;
             _unitOfWork = unitOfWork;
         }
-        //public async Task<IActionResult> Index()
-        //{
-        //    var user = await _userManager.GetUserAsync(User);
-        //    return View(user);
-        //}
+       
         public async Task<IActionResult> Dashboard()
         {
             List<Product> products = _unitOfWork.Product.GetAll(IncludeProperties: "Category").ToList();

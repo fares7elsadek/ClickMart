@@ -5,6 +5,8 @@ using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Utility;
 using Microsoft.AspNetCore.Authorization;
 using ClickMart.DataAccess.Migrations;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 
 namespace ClickMart.Areas.Admin.Controllers
 {
@@ -13,20 +15,24 @@ namespace ClickMart.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CategoryController(IUnitOfWork unitOfWork)
+        private readonly UserManager<User> _userManager;
+        public CategoryController(IUnitOfWork unitOfWork, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             List<Category> categories = _unitOfWork.Category.GetAll().ToList();
+            ViewData["User"] = await _userManager.GetUserAsync(User);
             return View(categories);
         }
 
         [HttpGet]
-        public IActionResult Upsert(string? Id)
+        public async Task<IActionResult> Upsert(string? Id)
         {
-            if(Id == null)
+            ViewData["User"] = await _userManager.GetUserAsync(User);
+            if (Id == null)
             {
                 return View();
             }
@@ -59,7 +65,17 @@ namespace ClickMart.Areas.Admin.Controllers
             return View();
         }
 
-        [HttpPost]
+        
+
+        #region APICALLS
+        [HttpGet]
+        public IActionResult GetAllCategories()
+        {
+            var Categories = _unitOfWork.Category.GetAll().ToList();
+            return Json(new { data = Categories });
+        }
+
+        [HttpDelete]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(string Id)
         {
@@ -68,22 +84,12 @@ namespace ClickMart.Areas.Admin.Controllers
             {
                 _unitOfWork.Category.Remove(category);
                 _unitOfWork.Save();
-                TempData["Success"] = "Category Deleted Successfully";
+                return Json(new { success = true, message = "Category Deleted Successfully" });
             }
             else
             {
-                TempData["Error"] = "Category Not Found";
+                return Json(new { success = false, message = "Error has happened" });
             }
-
-            return RedirectToAction("Index");
-        }
-
-        #region APICALLS
-        [HttpGet]
-        public IActionResult GetAllCategories()
-        {
-            var Categories = _unitOfWork.Category.GetAll().ToList();
-            return Json(new { data = Categories });
         }
         #endregion
     }

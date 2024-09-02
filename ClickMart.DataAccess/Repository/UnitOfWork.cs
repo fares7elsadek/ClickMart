@@ -19,6 +19,8 @@ namespace ClickMart.DataAccess.Repository
 
         public IUserRepository Users { get; private set; }
 
+        public IReviewRepository Reviews { get; private set; }
+
         private AppDbContext _db;
         public UnitOfWork(AppDbContext db)
         {
@@ -28,6 +30,7 @@ namespace ClickMart.DataAccess.Repository
             Attributes = new AttributesRepository(this._db);
             Countries = new CountryRepository(this._db);
             Users = new UserRepository(this._db);
+            Reviews = new ReviewRepository(this._db);
         }
         public void Save()
         {

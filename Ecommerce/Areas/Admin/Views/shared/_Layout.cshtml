@@ -29,6 +29,8 @@
     
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <!-- Toastr -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
     <!-- Template Stylesheet -->
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
@@ -50,6 +52,7 @@
             <!-- Start navbar-->
             @(await RenderSectionAsync("Navbar"))
             <!-- End navbar-->
+            <partial name="_NotificationsPartial" />
                @RenderBody()
             
         </div>
@@ -72,6 +75,10 @@
 
     <!--Data Tables-->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <!--Sweet Alert-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Toastr -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <!-- Template Javascript -->
     <script src="~/js/Admin/main.js"></script>
     @(await RenderSectionAsync("Scripts",false))

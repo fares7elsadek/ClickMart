@@ -2,6 +2,7 @@
 using ClickMart.Models.Models;
 using ClickMart.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,20 +17,25 @@ namespace ClickMart.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public ProductController(IUnitOfWork unitOfWork,IWebHostEnvironment webHostEnvironment)
+        private readonly UserManager<User> _userManager;
+        public ProductController(IUnitOfWork unitOfWork
+            ,IWebHostEnvironment webHostEnvironment,
+            UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             List<Product> products = _unitOfWork.Product.GetAll(IncludeProperties:"Category").ToList();
+            ViewData["User"] = await _userManager.GetUserAsync(User);
             return View(products);
         }
 
         [HttpGet]
-        public IActionResult Upsert(string? Id)
+        public async Task<IActionResult> Upsert(string? Id)
         {
             IEnumerable<SelectListItem> Categories = _unitOfWork.Category.GetAll().Select(x =>
                 new SelectListItem
@@ -38,6 +44,7 @@ namespace ClickMart.Areas.Admin.Controllers
                     Value = x.Id,
                 });
             ViewBag.Categories = Categories;
+            ViewData["User"] = await _userManager.GetUserAsync(User);
             if (Id == null)
             {
                 return View();

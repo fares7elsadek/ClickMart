@@ -27,7 +27,12 @@ namespace ClickMart.DataAccess.Data.config
             builder.Property(u => u.avatar)
                 .HasColumnType("varchar")
                 .HasMaxLength(255)
-                .HasDefaultValue("");
+                .HasDefaultValue("Images/User/Default/avatar.webp");
+
+            builder.HasMany(x => x.Reviews)
+               .WithOne(x => x.User)
+               .HasForeignKey(x => x.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
         }
 	}
 }

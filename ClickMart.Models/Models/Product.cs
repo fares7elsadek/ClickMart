@@ -41,5 +41,7 @@ namespace ClickMart.Models.Models
         public List<Galleries> Galleries { get; set; } = new List<Galleries>();
         public List<Attributes> Attributes { get; set; } = new List<Attributes>();
         public List<ProductAttributes> ProductAttributes { get; set; } = new List<ProductAttributes>();
+
+        public List<Reviews> Reviews { get; set; } = new List<Reviews>();
     }
 }

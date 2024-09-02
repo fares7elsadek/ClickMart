@@ -5,7 +5,7 @@
 }
 @Html.AntiForgeryToken()
 <div class="container">
-    <div class="content m-auto mt-5" style="width: 80%;">
+    <div class="content m-auto mt-5" style="width: 100%;">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Products</h2>
             <a class="btn btn-primary rounded-pill d-flex align-items-center" href="@Url.Action("Upsert")">
@@ -19,6 +19,7 @@
                         <th scope="col">Product Title</th>
                         <th scope="col">Product Price</th>
                         <th scope="col">Product Category</th>
+                        <th scope="col">Status</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -28,9 +29,13 @@
     </div>
 </div>
 
-@section Scripts{    
-    <script src="~/js/product/datatables.js"></script>
+@section Navbar {
+    <partial name="_NavbarPartial" model="@ViewBag.User" />
 }
-@section headingSection {
-    <partial name="_CollapseWrapperPartial" />
+
+@section Sidebar {
+    <partial name="_SidbarPartial" model="@ViewBag.User" />
+}
+@section Scripts {
+    <script src="~/js/product/datatables.js"></script>
 }

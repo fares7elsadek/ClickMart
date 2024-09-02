@@ -34,7 +34,7 @@
             <div class="bg-light text-center rounded p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h6 class="mb-0">Products</h6>
-                    <a href="">Show All</a>
+                    <a asp-action="Index" asp-area="Admin" asp-controller="Product">Show All</a>
                 </div>
                 <partial name="_ProductPartial" model="@Model.Products" />
             </div>
@@ -43,7 +43,7 @@
             <div class="bg-light text-center rounded p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h6 class="mb-0">Categories</h6>
-                    <a href="">Show All</a>
+                    <a asp-action="Index" asp-area="Admin" asp-controller="Category">Show All</a>
                 </div>
                 <partial name="_CategoryPartial" model="@Model.Products" />
             </div>

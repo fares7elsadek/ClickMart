@@ -78,6 +78,11 @@ namespace ClickMart.DataAccess.Data.config
             builder.HasMany(x => x.Attributes)
                 .WithMany(x => x.Products)
                 .UsingEntity<ProductAttributes>();
+
+            builder.HasMany(x => x.Reviews)
+                .WithOne(x => x.Product)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
                 
 
             builder.HasData(GetProductData());
