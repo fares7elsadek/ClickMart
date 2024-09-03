@@ -21,6 +21,8 @@ namespace ClickMart.DataAccess.Data
 		public DbSet<Reviews> Reviews { get; set; }
 
 		public DbSet<Company> Companies { get; set; }
+
+		public DbSet<Cart> Carts { get; set; }
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
 

@@ -3,6 +3,7 @@ using ClickMart.Models.Models;
 using ClickMart.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -13,12 +14,15 @@ namespace ClickMart.Areas.Admin.Controllers
     public class AttributesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public AttributesController(IUnitOfWork unitOfWork)
+        private readonly UserManager<User> _userManager;
+        public AttributesController(IUnitOfWork unitOfWork
+            ,UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
         [HttpGet]
-        public IActionResult Create(string productId)
+        public async Task<IActionResult> Create(string productId)
         {
             IEnumerable<SelectListItem> Products = _unitOfWork.Product.GetAll().Select(x =>
                 new SelectListItem
@@ -29,6 +33,7 @@ namespace ClickMart.Areas.Admin.Controllers
                 });
             ViewBag.Products = Products;
             ViewBag.productId = productId;
+            ViewData["User"] = await _userManager.GetUserAsync(User);
             return View();
         }
 
@@ -49,7 +54,7 @@ namespace ClickMart.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(string Id,string productId)
+        public async Task<IActionResult> Edit(string Id,string productId)
         {
             var attribute = _unitOfWork.Attributes.GetOrDefalut(a => a.Id == Id);
             IEnumerable<SelectListItem> products = _unitOfWork.Product.GetAll().Select(x =>
@@ -61,6 +66,7 @@ namespace ClickMart.Areas.Admin.Controllers
                     });
             ViewBag.Products = products;
             ViewBag.productId = productId;
+            ViewData["User"] = await _userManager.GetUserAsync(User);
             return View(attribute);
         }
         [HttpPost]

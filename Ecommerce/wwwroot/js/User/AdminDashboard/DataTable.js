@@ -5,7 +5,7 @@ $(document).ready(function () {
 
 function loadUserDataTable() {
     UserDataTable = $('#UserDataTable').DataTable({
-        "ajax": { url: '/Admin/AdminPanel/getallusers' },
+        "ajax": { url: '/Admin/User/getallusers' },
         "columns": [
             {
                 data: null,
@@ -17,9 +17,5 @@ function loadUserDataTable() {
             { data: "userName", width: "35%" },
             { data: "email", width: "35%" }
         ]
-            
-           
-            
-
     });
 }

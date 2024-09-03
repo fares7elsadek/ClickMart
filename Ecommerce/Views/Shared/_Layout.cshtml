@@ -23,39 +23,37 @@
         <!-- Jumbotron -->
         <div class="p-3 text-center bg-white border-bottom">
             <div class="container">
-                <div class="row gy-3">
-                    <!-- Left elements -->
-                    <div class="col-lg-2 col-sm-4 col-4">
-                        <a href="https://mdbootstrap.com/" target="_blank" class="float-start">
-                            <img src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png" height="35" />
+                <div class="row gy-3 align-items-center">
+                    <!-- Logo -->
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-4">
+                        <a href="/" class="float-start">
+                            <img src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png" height="35" alt="Brand Logo" />
                         </a>
                     </div>
-                    <!-- Left elements -->
-                    <!-- Center elements -->
-                    <div class="order-lg-last col-lg-5 col-sm-8 col-8">
-                        <div class="d-flex float-end">
-                            <partial name="_LoginPartial" />
-                        </div>
-                    </div>
-                    <!-- Center elements -->
-                    <!-- Right elements -->
-                    <div class="col-lg-4 col-md-6 col-sm-8 col-10 mx-auto">
+                    <!-- Search Bar -->
+                    <div class="col-lg-5 col-md-6 col-sm-8 col-8">
                         <div class="input-group">
-                            <input type="search" id="form1" class="form-control" placeholder="Search" />
-                            <button type="button" class="btn btn-primary">
+                            <input type="search" id="form1" class="form-control border-end-0" placeholder="Search" aria-label="Search" />
+                            <button type="button" class="btn btn-primary border-start-0">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
                     </div>
-                    <!-- Right elements -->
+                    <!-- Cart and Login/Logout -->
+                    <div class="col-lg-5 col-md-12 col-sm-12 col-12 d-flex justify-content-end align-items-center">
+                        <partial name="_CartPartial" />
+                        <div class="d-flex align-items-center">
+                            <partial name="_LoginPartial" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Jumbotron -->
         @RenderSection("headingSection", false)
         @RenderSection("ProductHeading", false)
         @RenderSection("Jumbotron", false)
     </header>
+
     <partial name="_NotificationsPartial" />
     @RenderBody()
 

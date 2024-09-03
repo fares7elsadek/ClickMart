@@ -6,24 +6,23 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <div class="d-flex align-items-center me-3">
-            @if (User.IsInRole(SD.Role_Admin))
-            {
-                <a asp-action="Dashboard" asp-controller="AdminPanel" asp-area="Admin" class="btn btn-primary px-2 py-2 rounded-pill shadow-sm me-2" type="button">
-                    <i class="bi bi-gear me-2"></i> Admin Panel
-                </a>
-            }
-            <a id="manage" class="nav-link text-dark d-flex align-items-center" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+            <a id="manage" class="nav-link text-dark d-flex align-items-center"
+               asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
                 @if (!string.IsNullOrEmpty(@UserManager.GetUserAsync(User).Result?.avatar))
                 {
-                    <img class="rounded-circle me-1" style="height:30px;width:30px" src="/@UserManager.GetUserAsync(User).Result?.avatar" alt="profile" />
+                    <img class="rounded-circle me-2" style="height:35px;width:35px"
+                         src="/@UserManager.GetUserAsync(User).Result?.avatar" alt="profile" />
                 }
                 <span class="d-none d-md-inline">Hello, @UserManager.GetUserName(User)!</span>
             </a>
         </div>
         <div>
-            <form id="logoutForm" class="d-flex align-items-center" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button id="logout" type="submit" class="btn btn-link text-dark border-0 p-0 d-flex align-items-center">
-                    <i class="fas fa-sign-out-alt m-1 me-md-2"></i>
+            <form id="logoutForm" class="d-flex align-items-center"
+                  asp-area="Identity" asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button id="logout" type="submit"
+                        class="btn btn-link text-dark d-flex align-items-center p-0">
+                    <i class="fas fa-sign-out-alt me-2"></i>
                     <span class="d-none d-md-inline">Logout</span>
                 </button>
             </form>
@@ -31,13 +30,13 @@
     }
     else
     {
-        <a class="btn btn-light border me-3" asp-area="Identity" asp-page="/Account/Register">
-            <i class="fas fa-user-plus me-1"></i>
-            <span class="d-none d-md-inline">Register</span>
+        <a class="btn btn-outline-primary me-3 rounded-pill"
+           asp-area="Identity" asp-page="/Account/Register">
+            <i class="fas fa-user-plus me-2"></i> Register
         </a>
-        <a class="btn btn-primary text-white" asp-area="Identity" asp-page="/Account/Login">
-            <i class="fas fa-sign-in-alt me-1"></i>
-            <span class="d-none d-md-inline">Login</span>
+        <a class="btn btn-primary text-white rounded-pill px-4"
+           asp-area="Identity" asp-page="/Account/Login">
+            <i class="fas fa-sign-in-alt me-2"></i> Login
         </a>
     }
 </div>

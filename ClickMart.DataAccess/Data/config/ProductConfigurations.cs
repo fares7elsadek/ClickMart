@@ -83,6 +83,11 @@ namespace ClickMart.DataAccess.Data.config
                 .WithOne(x => x.Product)
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x =>x.carts)
+                .WithOne(x => x.Product)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
                 
 
             builder.HasData(GetProductData());

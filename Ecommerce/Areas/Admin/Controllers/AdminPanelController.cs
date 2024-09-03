@@ -42,22 +42,7 @@ namespace ClickMart.Areas.Admin.Controllers
         }
 
         #region APICALLS
-        [HttpGet]
-        public IActionResult GetAllUsers()
-        {
-            var users = _unitOfWork.Users.GetAll()
-                .Select(x => new
-                {
-                    x.FirstName,
-                    x.LastName,
-                    x.UserName,
-                    x.Email,
-                    x.avatar
-                })
-                .ToList();
-
-            return Json(new { data = users });
-        }
+        
         #endregion
     }
 }

@@ -9,5 +9,7 @@ namespace ClickMart.ViewModels.product
 
         public List<Reviews> reviews { get; set; }
 
+        public Cart cart { get; set; }  
+
     }
 }

@@ -1,0 +1,10 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <a asp-action="Index" asp-controller="Cart" asp-area="Customer" class="btn btn-outline-primary position-relative me-3">
+        <i class="bi bi-cart-fill"></i> Cart
+    </a>
+}

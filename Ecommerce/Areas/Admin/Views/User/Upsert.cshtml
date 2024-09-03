@@ -1,0 +1,74 @@
+﻿@model Company
+
+@{
+    @if (Model?.Id != null)
+    {
+        ViewData["Title"] = "Update Company";
+    }
+    else
+    {
+        ViewData["Title"] = "Create new Company";
+    }
+}
+
+<div class="container">
+    <div class="content m-auto mt-5 p-4 border rounded-3 shadow-sm" style="max-width: 600px;">
+        @if (Model?.Id != null)
+        {
+            <h2 class="mb-4 text-center">Update Company</h2>
+        }
+        else
+        {
+            <h2 class="mb-4 text-center">Create new Company</h2>
+        }
+        <div asp-validation-summary="All"></div>
+        <form asp-action="Upsert">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Company Name</label>
+                <input asp-for="Name" class="form-control" placeholder="Company name" required>
+                <span class="text-danger" asp-validation-for="Name"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="StreetAddress" class="form-label"></label>
+                <input asp-for="StreetAddress" class="form-control" placeholder="Street address" required>
+                <span class="text-danger" asp-validation-for="StreetAddress"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" placeholder="City" required>
+                <span class="text-danger" asp-validation-for="City"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="State" class="form-label"></label>
+                <input asp-for="State" class="form-control" placeholder="State" required>
+                <span class="text-danger" asp-validation-for="State"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PostalCode" class="form-label"></label>
+                <input asp-for="PostalCode" class="form-control" placeholder="Postal code" required>
+                <span class="text-danger" asp-validation-for="PostalCode"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="Phone number" required>
+                <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Index", "Company")" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Company
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Navbar {
+    <partial name="_NavbarPartial" model="@ViewBag.User" />
+}
+
+@section Sidebar {
+    <partial name="_SidbarPartial" model="@ViewBag.User" />
+}

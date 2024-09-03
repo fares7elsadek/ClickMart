@@ -15,5 +15,7 @@ namespace ClickMart.Models.Models
 		public string? CompanyId { get; set; }
 
 		public Company Company { get; set; }
+
+		public List<Cart> Carts { get; set; } = new List<Cart>();
 	}
 }

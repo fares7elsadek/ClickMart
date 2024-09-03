@@ -23,6 +23,8 @@ namespace ClickMart.DataAccess.Repository
 
         public ICompanyRepository Company { get; private set; }
 
+        public ICartRepository Cart { get; private set; }
+
         private AppDbContext _db;
         public UnitOfWork(AppDbContext db)
         {
@@ -34,6 +36,7 @@ namespace ClickMart.DataAccess.Repository
             Users = new UserRepository(this._db);
             Reviews = new ReviewRepository(this._db);
             Company = new CompanyRepository(this._db);
+            Cart = new CartRepository(this._db);
         }
         public void Save()
         {
