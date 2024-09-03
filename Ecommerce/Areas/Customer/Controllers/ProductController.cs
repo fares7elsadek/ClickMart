@@ -52,14 +52,15 @@ namespace ClickMart.Areas.Customer.Controllers
                 _unitOfWork.Cart.Add(cart);
             }
             _unitOfWork.Save();
-            if (!string.IsNullOrEmpty(place)&& place=="home")
-            {
-                return RedirectToAction("Index", "Home");
-            }else if(!string.IsNullOrEmpty(place) && place == "Cart")
-            {
-                return RedirectToAction("Index", "Cart");
-            }
-            return RedirectToAction("Details",new { Id = cart.ProductId });   
+            //if (!string.IsNullOrEmpty(place)&& place=="home")
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}else if(!string.IsNullOrEmpty(place) && place == "Cart")
+            //{
+            //    return RedirectToAction("Index", "Cart");
+            //}
+            return Json(new { success = true, message = "Product Added to the cart successfully" });
+            //return RedirectToAction("Details",new { Id = cart.ProductId });   
         }
     }
 }

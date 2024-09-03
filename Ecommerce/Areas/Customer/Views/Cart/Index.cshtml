@@ -127,7 +127,7 @@
     </div>
 </section>
 
-
+@Html.AntiForgeryToken()
 <section>
     <div class="container my-5">
         <header class="mb-4">
@@ -156,12 +156,7 @@
                                 <strong>@product.Price.ToString("C")</strong>
                             </div>
                             <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                <form asp-action="AddToCart" asp-controller="Product" asp-area="Customer" class="d-inline">
-                                    <input type="hidden" name="Quantity" value="1" id="AddToCartQuantityInput">
-                                    <input type="hidden" name="ProductId" value="@product.Id">
-                                    <input type="hidden" name="place" value="Cart">
-                                    <button type="submit" class="btn btn-outline-primary w-100">Add to cart</button>
-                                </form>
+                                <button type="button" class="btn btn-outline-primary w-100" onclick="addToCart('@Url.Action("AddToCart", "Product", new { area = "Customer" })','@product.Id')">Add to cart</button>
                             </div>
                         </div>
                     </div>
@@ -181,10 +176,38 @@
             let currentValue = parseInt(input.value);
             let newValue = currentValue + change;
 
-            if (newValue >= 1 && newValue <= 10) { // Assuming max quantity of 10
+            if (newValue >= 1 && newValue <= 100) { // Assuming max quantity of 10
                 input.value = newValue;
             }
         }
+
+        function addToCart(url,productId) {
+            var quantity = 1; 
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                headers: {
+                    "RequestVerificationToken": token
+                },
+                data: {
+                    Quantity: quantity,
+                    ProductId: productId
+                },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (err) {
+                    toastr.error("An error occurred while trying to add the product to the cart.");
+                }
+            });
+        }
+
     </script>
 }
 

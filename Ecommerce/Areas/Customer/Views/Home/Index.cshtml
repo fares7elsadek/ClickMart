@@ -11,6 +11,7 @@
     <partial name="_CollapseWrapperPartial" />
 }
 
+@Html.AntiForgeryToken()
 <!-- Products -->
 <section>
     <div class="container my-5">
@@ -49,14 +50,10 @@
                                 <a href="#!" class="btn btn-sm btn-light border-0 shadow-sm rounded-circle icon-hover">
                                     <i class="fas fa-heart text-danger"></i>
                                 </a>
-                                <form asp-action="AddToCart" asp-controller="Product" asp-area="Customer" class="d-inline">
-                                    <input type="hidden" name="Quantity" value="1" id="AddToCartQuantityInput">
-                                    <input type="hidden" name="ProductId" value="@product.Id">
-                                    <input type="hidden" name="place" value="home">
-                                    <button type="submit" class="btn btn-sm btn-light border-0 shadow-sm rounded-circle icon-hover">
-                                        <i class="fas fa-shopping-cart text-success"></i>
-                                    </button>
-                                </form>
+
+                                <button type="button" class="btn btn-sm btn-light border-0 shadow-sm rounded-circle icon-hover" onclick="addToCart('@Url.Action("AddToCart", "Product", new { area = "Customer" })','@product.Id')">
+                                    <i class="fas fa-shopping-cart text-success"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -71,3 +68,35 @@
 <partial name="_FeaturesPartial" />
 <partial name="_BlogPartial" />
 <partial name="_FooterPartial" />
+
+@section Scripts{
+    <script>
+        function addToCart(url, productId) {
+            var quantity = 1;
+            var token = $('input[name="__RequestVerificationToken"]').val();
+            $.ajax({
+                url: url,
+                type: "POST",
+                headers: {
+                    "RequestVerificationToken": token
+                },
+                data: {
+                    cart: {
+                        Quantity: quantity,
+                        ProductId: productId
+                    }
+                },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (err) {
+                    toastr.error("An error occurred while trying to add the product to the cart.");
+                }
+            });
+        }
+    </script>
+}

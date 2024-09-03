@@ -24,7 +24,7 @@
     </div>
     <!-- Heading -->
 }
-
+@Html.AntiForgeryToken()
 <!-- content -->
 <section class="py-5">
     <div class="container">
@@ -96,14 +96,10 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Form for Add to Cart -->
-                    <form asp-action="AddToCart" asp-controller="Product" asp-area="Customer" class="d-inline">
-                        <input type="hidden" asp-for="cart.Quantity"  id="AddToCartQuantityInput">
-                        <input type="hidden" asp-for="cart.ProductId" value="@Model.product.Id">
-                        <button type="submit" class="btn btn-primary shadow-0" onclick="SetQuantityValue()">
-                            <i class="me-1 fa fa-shopping-basket"></i> Add to cart
-                        </button>
-                    </form>
+                    <button type="button" class="btn btn-primary shadow-0" onclick="addToCart('@Url.Action("AddToCart", "Product", new { area = "Customer" })')">
+                        <i class="me-1 fa fa-shopping-basket"></i> Add to cart
+                    </button>
+                    <input type="hidden" id="AddToCartProductIdInput" value="@Model.product.Id">
 
                     <!-- Form for Buy Now -->
                     <form method="post" action="/your-buy-now-endpoint" class="d-inline">
@@ -304,6 +300,7 @@
         </div>
     </div>
     </div>
+    </div>
 </section>
 
 <partial name="_FooterPrimaryColorPartial"/>
@@ -318,6 +315,36 @@
         function SetQuantityValue(){
             let input = document.getElementById("quantityInput").value;
             document.getElementById("AddToCartQuantityInput").value = input;
+        }
+
+        function addToCart(url) {
+            var quantity = $('#quantityInput').val();
+            var productId = $('#AddToCartProductIdInput').val();
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                headers: {
+                    "RequestVerificationToken": token
+                },
+                data: {
+                    cart: {
+                        Quantity: quantity,
+                        ProductId: productId
+                    }
+                },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (err) {
+                    toastr.error("An error occurred while trying to add the product to the cart.");
+                }
+            });
         }
     </script>
 }

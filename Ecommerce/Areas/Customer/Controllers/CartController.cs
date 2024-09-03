@@ -69,6 +69,7 @@ namespace ClickMart.Areas.Customer.Controllers
             {
                 cart.Quantity += 1;
                 _unitOfWork.Save();
+                TempData["Success"] = "Done";
             }
             return RedirectToAction("Index");
         }
@@ -82,6 +83,7 @@ namespace ClickMart.Areas.Customer.Controllers
             {
                 cart.Quantity -= 1;
                 _unitOfWork.Save();
+                TempData["Success"] = "Done";
             }
             return RedirectToAction("Index");
         }
@@ -95,7 +97,8 @@ namespace ClickMart.Areas.Customer.Controllers
 			{
 				_unitOfWork.Cart.Remove(cart);
 				_unitOfWork.Save();
-			}
+                TempData["Success"] = "Done";
+            }
 			return RedirectToAction("Index");
 		}
     }
