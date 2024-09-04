@@ -33,12 +33,18 @@
                     <!-- Search Bar -->
                     <div class="col-lg-5 col-md-6 col-sm-8 col-8">
                         <div class="input-group">
-                            <input type="search" id="form1" class="form-control border-end-0" placeholder="Search" aria-label="Search" />
-                            <button type="button" class="btn btn-primary border-start-0">
-                                <i class="fas fa-search"></i>
-                            </button>
+                            <form method="get" asp-action="Search" asp-controller="Product" asp-area="Customer" class="w-100">
+                                <div class="input-group">
+                                    <input type="search" value="" name="s" id="search" class="form-control border-end-0" placeholder="Search" aria-label="Search" />
+                                    <input type="hidden" value="1" name="page" />
+                                    <button type="submit" class="btn btn-primary border-start-0">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
+
                     <!-- Cart and Login/Logout -->
                     <div class="col-lg-5 col-md-12 col-sm-12 col-12 d-flex justify-content-end align-items-center">
                         <partial name="_CartPartial" />
@@ -63,7 +69,13 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    @* <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script> *@
+    <script>
+        if (window.location.search && window.location.search!=""){
+            const urlParams = new URLSearchParams(window.location.search)
+            const searchValue = urlParams.get('s');
+            document.getElementById("search").value = searchValue;
+        }
+    </script>
     <!-- fontawesome js file -->
     <script src="~/js/all.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

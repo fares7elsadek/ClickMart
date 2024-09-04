@@ -13,7 +13,7 @@ function loadDataTable(productId) {
         scrollY: 300,
         "ajax": { url: '/Admin/Attributes/GetAllAttributes/'+productId },
         "columns": [
-            { data: "attributeName", "width": "20%" },
+            { data: "attributeName", "width": "10%" },
             {
                 data: "id",
                 "render": function (data) {

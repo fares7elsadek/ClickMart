@@ -33,6 +33,36 @@ namespace ClickMart.Areas.Customer.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public IActionResult Search(string s="",int page=1)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return RedirectToAction("Index","Home");
+            }
+            if (page <= 0)
+            {
+                page = 1;
+            }
+            var Products = _unitOfWork.Product.GetAllWithCondition(p => p.Title.Contains(s)).ToList();
+            int total = Products.Count();
+            int size = 5;
+            int pages = (int)Math.Ceiling((decimal)total/size);
+            if(page > pages)
+            {
+                page = pages;
+            }
+            var result = Products.Skip((page-1)*size).Take(size).ToList();
+            ProductSearchViewModel viewModel = new ProductSearchViewModel();
+            viewModel.products = result;
+            viewModel.TotalProducts = total;
+            viewModel.NumberOfPages = pages;
+            viewModel.SerachString = s;
+            viewModel.CurrentPage = page;
+            return View(viewModel);
+        }
+
+        #region APICALLS
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -52,15 +82,8 @@ namespace ClickMart.Areas.Customer.Controllers
                 _unitOfWork.Cart.Add(cart);
             }
             _unitOfWork.Save();
-            //if (!string.IsNullOrEmpty(place)&& place=="home")
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}else if(!string.IsNullOrEmpty(place) && place == "Cart")
-            //{
-            //    return RedirectToAction("Index", "Cart");
-            //}
             return Json(new { success = true, message = "Product Added to the cart successfully" });
-            //return RedirectToAction("Details",new { Id = cart.ProductId });   
         }
+        #endregion
     }
 }
