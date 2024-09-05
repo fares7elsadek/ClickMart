@@ -4,6 +4,7 @@ using ClickMart.ViewModels.product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Security.Claims;
 
 namespace ClickMart.Areas.Customer.Controllers
@@ -34,33 +35,63 @@ namespace ClickMart.Areas.Customer.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string s="",int page=1)
+        public IActionResult Search(string? categoryIds, string s = "", int page = 1)
         {
             if (string.IsNullOrEmpty(s))
             {
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index", "Home");
             }
             if (page <= 0)
             {
                 page = 1;
             }
-            var Products = _unitOfWork.Product.GetAllWithCondition(p => p.Title.Contains(s)).ToList();
+
+            List<Product> Products;
+            List<string> selectedCategories = new List<string>();
+
+            
+            if (!string.IsNullOrEmpty(categoryIds))
+            {
+                
+                var categoryIdList = categoryIds.Split(',').ToList();
+                selectedCategories = categoryIdList;
+
+                
+                Products = _unitOfWork.Product.GetAllWithCondition(p =>
+                    categoryIdList.Contains(p.CategoryId) && p.Title.Contains(s)).ToList();
+            }
+            else
+            {
+              
+                Products = _unitOfWork.Product.GetAllWithCondition(p => p.Title.Contains(s)).ToList();
+            }
+
             int total = Products.Count();
             int size = 5;
-            int pages = (int)Math.Ceiling((decimal)total/size);
-            if(page > pages)
+            int pages = (int)Math.Ceiling((decimal)total / size);
+            if (page > pages)
             {
                 page = pages;
             }
-            var result = Products.Skip((page-1)*size).Take(size).ToList();
-            ProductSearchViewModel viewModel = new ProductSearchViewModel();
-            viewModel.products = result;
-            viewModel.TotalProducts = total;
-            viewModel.NumberOfPages = pages;
-            viewModel.SerachString = s;
-            viewModel.CurrentPage = page;
+
+            var result = Products.Skip((page - 1) * size).Take(size).ToList();
+            var categories = _unitOfWork.Category.GetAll().ToList();
+
+          
+            ProductSearchViewModel viewModel = new ProductSearchViewModel
+            {
+                products = result,
+                TotalProducts = total,
+                NumberOfPages = pages,
+                SerachString = s,
+                CurrentPage = page,
+                categories = categories,
+                SelectedCategories = selectedCategories.Select(id => id.ToString()).ToList()
+            };
+
             return View(viewModel);
         }
+
 
         #region APICALLS
         [HttpPost]
@@ -83,6 +114,16 @@ namespace ClickMart.Areas.Customer.Controllers
             }
             _unitOfWork.Save();
             return Json(new { success = true, message = "Product Added to the cart successfully" });
+        }
+        [HttpGet]
+        public IActionResult GetProductSuggestions(string searchString)
+        {
+            var suggestions = _unitOfWork.Product
+                .GetAllWithCondition(p => p.Title.StartsWith(searchString))
+                .Select(p => p.Title)
+                .ToList();
+
+            return Json(suggestions);
         }
         #endregion
     }

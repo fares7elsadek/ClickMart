@@ -7,3 +7,17 @@
     color: #3b71ca !important;
 }
 
+#suggestions .list-group-item {
+    cursor: pointer;
+}
+
+    #suggestions .list-group-item:hover {
+        background-color: #f0f0f0;
+    }
+
+#suggestions {
+    max-height: 200px;
+    overflow-y: auto; 
+}
+
+

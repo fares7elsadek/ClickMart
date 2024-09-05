@@ -32,17 +32,20 @@
                     </div>
                     <!-- Search Bar -->
                     <div class="col-lg-5 col-md-6 col-sm-8 col-8">
-                        <div class="input-group">
+                        <div class="input-group" style="position: relative;">
                             <form method="get" asp-action="Search" asp-controller="Product" asp-area="Customer" class="w-100">
                                 <div class="input-group">
-                                    <input type="search" value="" name="s" id="search" class="form-control border-end-0" placeholder="Search" aria-label="Search" />
+                                    <input type="search" value="" name="s" autocomplete="off" id="search" class="form-control border-end-0" placeholder="Search" aria-label="Search" />
                                     <input type="hidden" value="1" name="page" />
                                     <button type="submit" class="btn btn-primary border-start-0">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
                             </form>
+                            <div id="suggestions" class="list-group" style="position: absolute; top: 100%; left: 0; width: 100%; z-index: 1000;"></div>
                         </div>
+                        <!-- Suggestions Dropdown -->
+                        
                     </div>
 
                     <!-- Cart and Login/Logout -->
@@ -75,6 +78,44 @@
             const searchValue = urlParams.get('s');
             document.getElementById("search").value = searchValue;
         }
+
+        $(document).ready(function () {
+            // Pre-fill search input from URL
+            if (window.location.search && window.location.search != "") {
+                const urlParams = new URLSearchParams(window.location.search);
+                const searchValue = urlParams.get('s');
+                document.getElementById("search").value = searchValue;
+            }
+
+            // Listen for input on the search bar
+            $('#search').on('input', function () {
+                let query = $(this).val();
+
+                if (query.length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("GetProductSuggestions", "Product", new { area = "Customer" })',
+                        type: 'GET',
+                        data: { searchString: query },
+                        success: function (data) {
+                            $('#suggestions').empty(); 
+                            if (data.length > 0) {
+                                data.forEach(function (item) {
+                                    $('#suggestions').append(`<a href="/Customer/Product/Search/?s=${item}" class="list-group-item list-group-item-action">${item}</a>`);
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    $('#suggestions').empty();
+                }
+            });
+            $(document).click(function (e) {
+                if (!$(e.target).closest('#search').length) {
+                    $('#suggestions').empty();
+                }
+            });
+        });
+
     </script>
     <!-- fontawesome js file -->
     <script src="~/js/all.min.js"></script>

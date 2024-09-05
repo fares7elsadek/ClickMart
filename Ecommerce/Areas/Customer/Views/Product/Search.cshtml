@@ -46,32 +46,6 @@
                 <div class="collapse card d-lg-block mb-5" id="navbarSupportedContent">
                     <div class="accordion" id="accordionPanelsStayOpenExample">
                         <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingOne">
-                                <button class="accordion-button text-dark bg-light"
-                                        type="button"
-                                        data-mdb-toggle="collapse"
-                                        data-mdb-target="#panelsStayOpen-collapseOne"
-                                        aria-expanded="true"
-                                        aria-controls="panelsStayOpen-collapseOne">
-                                    Related items
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
-                                <div class="accordion-body">
-                                    <ul class="list-unstyled">
-                                        <li><a href="#" class="text-dark">Electronics </a></li>
-                                        <li><a href="#" class="text-dark">Home items </a></li>
-                                        <li><a href="#" class="text-dark">Books, Magazines </a></li>
-                                        <li><a href="#" class="text-dark">Men's clothing </a></li>
-                                        <li><a href="#" class="text-dark">Interiors items </a></li>
-                                        <li><a href="#" class="text-dark">Underwears </a></li>
-                                        <li><a href="#" class="text-dark">Shoes for men </a></li>
-                                        <li><a href="#" class="text-dark">Accessories </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTwo">
                                 <button class="accordion-button text-dark bg-light"
                                         type="button"
@@ -79,114 +53,23 @@
                                         data-mdb-target="#panelsStayOpen-collapseTwo"
                                         aria-expanded="true"
                                         aria-controls="panelsStayOpen-collapseTwo">
-                                    Brands
+                                    Categories
                                 </button>
                             </h2>
                             <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
-                                <div class="accordion-body">
-                                    <div>
-                                        <!-- Checked checkbox -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked1" checked />
-                                            <label class="form-check-label" for="flexCheckChecked1">Mercedes</label>
-                                            <span class="badge badge-secondary float-end">120</span>
-                                        </div>
-                                        <!-- Checked checkbox -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked2" checked />
-                                            <label class="form-check-label" for="flexCheckChecked2">Toyota</label>
-                                            <span class="badge badge-secondary float-end">15</span>
-                                        </div>
-                                        <!-- Checked checkbox -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked3" checked />
-                                            <label class="form-check-label" for="flexCheckChecked3">Mitsubishi</label>
-                                            <span class="badge badge-secondary float-end">35</span>
-                                        </div>
-                                        <!-- Checked checkbox -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked4" checked />
-                                            <label class="form-check-label" for="flexCheckChecked4">Nissan</label>
-                                            <span class="badge badge-secondary float-end">89</span>
-                                        </div>
-                                        <!-- Default checkbox -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                            <label class="form-check-label" for="flexCheckDefault">Honda</label>
-                                            <span class="badge badge-secondary float-end">30</span>
-                                        </div>
-                                        <!-- Default checkbox -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                            <label class="form-check-label" for="flexCheckDefault">Suzuki</label>
-                                            <span class="badge badge-secondary float-end">30</span>
+                                    <div class="accordion-body">
+                                        <div>
+                                            <!-- Categories with Checkboxes -->
+                                            @foreach (var category in Model.categories)
+                                            {
+                                                <div class="form-check">
+                                                    <input class="form-check-input category-checkbox" type="checkbox" id="category-@category.Id" value="@category.Id"
+                                                    @(Model.SelectedCategories.Contains(category.Id) ? "checked" : "") />
+                                                    <label class="form-check-label" for="category-@category.Id">@category.Name</label>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingThree">
-                                <button class="accordion-button text-dark bg-light"
-                                        type="button"
-                                        data-mdb-toggle="collapse"
-                                        data-mdb-target="#panelsStayOpen-collapseThree"
-                                        aria-expanded="false"
-                                        aria-controls="panelsStayOpen-collapseThree">
-                                    Price
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree">
-                                <div class="accordion-body">
-                                    <div class="range">
-                                        <input type="range" class="form-range" id="customRange1" />
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-6">
-                                            <p class="mb-0">
-                                                Min
-                                            </p>
-                                            <div class="form-outline">
-                                                <input type="number" id="typeNumber" class="form-control" />
-                                                <label class="form-label" for="typeNumber">$0</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <p class="mb-0">
-                                                Max
-                                            </p>
-                                            <div class="form-outline">
-                                                <input type="number" id="typeNumber" class="form-control" />
-                                                <label class="form-label" for="typeNumber">$1,0000</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="btn btn-white w-100 border border-secondary">apply</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingThree">
-                                <button class="accordion-button text-dark bg-light"
-                                        type="button"
-                                        data-mdb-toggle="collapse"
-                                        data-mdb-target="#panelsStayOpen-collapseFour"
-                                        aria-expanded="false"
-                                        aria-controls="panelsStayOpen-collapseFour">
-                                    Size
-                                </button>
-                            </h2>
-                            <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingThree">
-                                <div class="accordion-body">
-                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check1" checked autocomplete="off" />
-                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check1">XS</label>
-                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check2" checked autocomplete="off" />
-                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check2">SM</label>
-                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check3" checked autocomplete="off" />
-                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check3">LG</label>
-                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check4" checked autocomplete="off" />
-                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check4">XXL</label>
-                                </div>
                             </div>
                         </div>
                         <div class="accordion-item">
@@ -271,8 +154,8 @@
                                     <div class="row g-0">
                                         <div class="col-xl-3 col-md-4 d-flex justify-content-center">
                                             <div class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
+                                                <a asp-action="Details" asp-area="Customer" asp-controller="Product" asp-route-Id="@product.Id">
                                                 <img src="/@product.ImageUrl" class="w-100" />
-                                                <a href="#!">
                                                     <div class="hover-overlay">
                                                         <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
                                                     </div>
@@ -280,7 +163,9 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-6 col-md-5 col-sm-7">
-                                            <h5>Rucksack Backpack Jeans</h5>
+                                            <a asp-action="Details" asp-area="Customer" asp-controller="Product" asp-route-Id="@product.Id">
+                                            <h5>@product.Title</h5>
+                                            </a>
                                             <div class="d-flex flex-row">
                                                 <div class="text-warning mb-1 me-2">
                                                     <i class="fa fa-star"></i>
@@ -301,7 +186,7 @@
                                         </div>
                                         <div class="col-xl-3 col-md-3 col-sm-5">
                                             <div class="d-flex flex-row align-items-center mb-1">
-                                                <h4 class="mb-1 me-1">@product.Price</h4>
+                                                <h4 class="mb-1 me-1">@product.Price.ToString("C")</h4>
                                                 @* <span class="text-danger"><s>$49.99</s></span> *@
                                             </div>
                                             <h6 class="text-success">Free shipping</h6>
@@ -326,7 +211,7 @@
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="/Customer/Product/Search?s=@Model.SerachString&page=1">1</a></li>
                         @for(int i = 2; i <= @Model.NumberOfPages; i++)
                         {
                             <li class="page-item"><a class="page-link" href="/Customer/Product/Search?s=@Model.SerachString&page=@i">@i</a></li>
@@ -344,5 +229,53 @@
     </div>
 </section>
 
+
+
 <partial name="_FooterPrimaryColorPartial" />
 
+@section Scripts{
+    <script>
+        if (window.location.search) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchValue = urlParams.get('page');
+
+            const pageItems = document.querySelectorAll(".page-item"); 
+            let length = pageItems.length;
+
+            for (let i = 0; i < length; i++) { 
+                let textValue = pageItems[i].textContent.trim(); 
+
+                if (Number(searchValue) === Number(textValue)) { 
+                    pageItems[i].classList.add("active");
+                    break; 
+                }
+            }
+        }
+
+        function updateUrlAndSubmitForm() {
+            let selectedCategories = [];
+
+          
+            document.querySelectorAll(".category-checkbox:checked").forEach(function (checkbox) {
+                selectedCategories.push(checkbox.value);
+            });
+
+            
+            let categoryIds = selectedCategories.join(',');
+
+           
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchValue = urlParams.get('s') || '';
+
+            let newUrl = `/Customer/Product/Search?categoryIds=${categoryIds}&s=${searchValue}`;
+            window.location.href = newUrl;
+        }
+
+        
+        document.querySelectorAll(".category-checkbox").forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                updateUrlAndSubmitForm(); 
+            });
+        });
+    </script>
+}
