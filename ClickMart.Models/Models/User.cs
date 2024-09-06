@@ -17,5 +17,7 @@ namespace ClickMart.Models.Models
 		public Company Company { get; set; }
 
 		public List<Cart> Carts { get; set; } = new List<Cart>();
+
+		public List<OrderHeader> OrderHeaders { get; set; } = new List<OrderHeader>();
 	}
 }

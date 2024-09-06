@@ -23,6 +23,14 @@ namespace ClickMart.DataAccess.Data
 		public DbSet<Company> Companies { get; set; }
 
 		public DbSet<Cart> Carts { get; set; }
+
+		public DbSet<OrderHeader> OrderHeaders { get; set; }
+
+		public DbSet<OrderDetails> OrderDetails { get; set; }
+
+		public DbSet<ShippingMethod> ShippingMethods { get; set; }
+
+		public DbSet<Coupons> Coupons { get; set; }
 		public AppDbContext(DbContextOptions options) : base(options)
 		{
 

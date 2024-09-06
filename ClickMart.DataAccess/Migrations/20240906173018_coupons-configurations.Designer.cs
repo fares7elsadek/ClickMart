@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240829122649_update-shortdesc")]
-    partial class updateshortdesc
+    [Migration("20240906173018_coupons-configurations")]
+    partial class couponsconfigurations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,9 @@ namespace ClickMart.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasMaxLength(5)
@@ -70,9 +73,15 @@ namespace ClickMart.DataAccess.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("varchar");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Addresses", (string)null);
                 });
@@ -108,6 +117,36 @@ namespace ClickMart.DataAccess.Migrations
                     b.ToTable("Attributes", (string)null);
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.Cart", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Carts", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_QuantityNotNegative", "[Quantity]>=0");
+                        });
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.Category", b =>
                 {
                     b.Property<string>("Id")
@@ -132,6 +171,48 @@ namespace ClickMart.DataAccess.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.Company", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("StreetAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies", (string)null);
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.Country", b =>
                 {
                     b.Property<string>("Id")
@@ -152,6 +233,51 @@ namespace ClickMart.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Countries", (string)null);
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.Coupons", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<string>("code")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("couponDescription")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<DateTime>("couponEndDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("couponStartDate")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("discountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal");
+
+                    b.Property<int>("maxUsage")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("timesUsed")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coupons", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Galleries", b =>
@@ -192,6 +318,107 @@ namespace ClickMart.DataAccess.Migrations
                     b.HasIndex("productId");
 
                     b.ToTable("Galleries", (string)null);
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.OrderDetails", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<string>("OrderHeaderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("qty")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderHeaderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.OrderHeader", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<string>("AddressId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Carrier")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CouponId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("OrderDetailsId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("OrderTotal")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly>("PaymentDueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ShippingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShippingMethodId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("CouponId");
+
+                    b.HasIndex("ShippingMethodId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OrderHeaders", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Product", b =>
@@ -279,6 +506,103 @@ namespace ClickMart.DataAccess.Migrations
                     b.ToTable("ProductAttributes", (string)null);
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
+                {
+                    b.Property<string>("CouponId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CouponsId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CouponId", "ProductId");
+
+                    b.HasIndex("CouponsId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCoupons");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Stars")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool?>("Verified")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reviews", t =>
+                        {
+                            t.HasCheckConstraint("CK_Stars_NoNegative", "[Stars]>=1 AND [Stars]<=5");
+                        });
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.ShippingMethod", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShippingMethods", (string)null);
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -286,6 +610,9 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("CompanyId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -297,6 +624,16 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -331,7 +668,15 @@ namespace ClickMart.DataAccess.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("avatar")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar")
+                        .HasDefaultValue("Images/User/Default/avatar.webp");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -341,27 +686,22 @@ namespace ClickMart.DataAccess.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.UserAddress", b =>
+            modelBuilder.Entity("CouponsProduct", b =>
                 {
-                    b.Property<string>("AddressId")
+                    b.Property<string>("CouponsId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("productsId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("IsDefault")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.HasKey("CouponsId", "productsId");
 
-                    b.HasKey("AddressId", "UserId");
+                    b.HasIndex("productsId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserAddresses", (string)null);
+                    b.ToTable("CouponsProduct");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -388,7 +728,7 @@ namespace ClickMart.DataAccess.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -413,7 +753,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -438,7 +778,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -460,7 +800,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -475,7 +815,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -494,7 +834,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Address", b =>
@@ -505,7 +845,34 @@ namespace ClickMart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ClickMart.Models.Models.User", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Country");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.Cart", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Product", "Product")
+                        .WithMany("carts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClickMart.Models.Models.User", "User")
+                        .WithMany("Carts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Galleries", b =>
@@ -516,6 +883,59 @@ namespace ClickMart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("product");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.OrderDetails", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.OrderHeader", "OrderHeader")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderHeaderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClickMart.Models.Models.Product", "Product")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderHeader");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.OrderHeader", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Address", "Address")
+                        .WithMany("Order")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ClickMart.Models.Models.Coupons", "Coupons")
+                        .WithMany("OrderHeaders")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ClickMart.Models.Models.ShippingMethod", "ShippingMethod")
+                        .WithMany("OrderHeaders")
+                        .HasForeignKey("ShippingMethodId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ClickMart.Models.Models.User", "User")
+                        .WithMany("OrderHeaders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Coupons");
+
+                    b.Navigation("ShippingMethod");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Product", b =>
@@ -548,23 +968,59 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("attribute");
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.UserAddress", b =>
+            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
                 {
-                    b.HasOne("ClickMart.Models.Models.Address", "Address")
-                        .WithMany("UserAddresses")
-                        .HasForeignKey("AddressId")
+                    b.HasOne("ClickMart.Models.Models.Coupons", null)
+                        .WithMany("ProductCoupons")
+                        .HasForeignKey("CouponsId");
+
+                    b.HasOne("ClickMart.Models.Models.Product", null)
+                        .WithMany("ProductCoupons")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClickMart.Models.Models.User", "User")
-                        .WithMany("Address")
+                        .WithMany("Reviews")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.User", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Company", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("CouponsProduct", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Coupons", null)
+                        .WithMany()
+                        .HasForeignKey("CouponsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Address");
-
-                    b.Navigation("User");
+                    b.HasOne("ClickMart.Models.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("productsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -620,7 +1076,7 @@ namespace ClickMart.DataAccess.Migrations
 
             modelBuilder.Entity("ClickMart.Models.Models.Address", b =>
                 {
-                    b.Navigation("UserAddresses");
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Attributes", b =>
@@ -633,21 +1089,57 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.Company", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.Country", b =>
                 {
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.Coupons", b =>
+                {
+                    b.Navigation("OrderHeaders");
+
+                    b.Navigation("ProductCoupons");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.OrderHeader", b =>
+                {
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Product", b =>
                 {
                     b.Navigation("Galleries");
 
+                    b.Navigation("OrderDetails");
+
                     b.Navigation("ProductAttributes");
+
+                    b.Navigation("ProductCoupons");
+
+                    b.Navigation("Reviews");
+
+                    b.Navigation("carts");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.ShippingMethod", b =>
+                {
+                    b.Navigation("OrderHeaders");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.User", b =>
                 {
-                    b.Navigation("Address");
+                    b.Navigation("Addresses");
+
+                    b.Navigation("Carts");
+
+                    b.Navigation("OrderHeaders");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

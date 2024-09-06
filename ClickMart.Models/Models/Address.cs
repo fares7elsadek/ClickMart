@@ -37,5 +37,7 @@ namespace ClickMart.Models.Models
 		public Country Country { get; set; }
 		public string UserId { get; set; }
 		public User User { get; set; }
+
+		public List<OrderHeader> Order { get; set; } = new List<OrderHeader>();
 	}
 }

@@ -42,6 +42,11 @@ namespace ClickMart.DataAccess.Data.config
 			builder.Property(x => x.PostalCode)
 				.HasColumnType("varchar")
 				.HasMaxLength(5);
+
+			builder.HasMany(x => x.Order)
+				.WithOne(x => x.Address)
+				.HasForeignKey(x => x.AddressId)
+				.OnDelete(DeleteBehavior.NoAction);
 		}
 	}
 }

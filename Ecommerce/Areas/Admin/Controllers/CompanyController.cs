@@ -4,7 +4,6 @@ using ClickMart.Models.Models;
 using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Utility;
 using Microsoft.AspNetCore.Authorization;
-using ClickMart.DataAccess.Migrations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 

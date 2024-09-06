@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 
 namespace ClickMart.Models.Models
 {
-    public class Cart
+    public class OrderDetails
     {
         public string Id { get; set; }
+        [Required]
+        public string OrderHeaderId { get; set; }
+
+        public OrderHeader OrderHeader { get; set; }
 
         public string ProductId { get; set; }
 
         public Product Product { get; set; }
 
-        public string UserId { get; set; }
 
-        public User User { get; set; }
+        public int qty { get; set; }
 
-        public int Quantity { get; set; }
+        public double Price { get; set; }
     }
 }

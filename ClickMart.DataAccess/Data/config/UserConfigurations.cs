@@ -38,6 +38,13 @@ namespace ClickMart.DataAccess.Data.config
                 .WithOne(x => x.User)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x=>x.OrderHeaders)
+                .WithOne(x =>x.User)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
         }
 	}
 }

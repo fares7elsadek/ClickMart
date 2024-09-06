@@ -25,6 +25,12 @@ namespace ClickMart.DataAccess.Repository
 
         public ICartRepository Cart { get; private set; }
 
+        public IOrderHeaderRepository OrderHeader { get; private set; }
+
+        public IOrderDetailRepository OrderDetail { get; private set; }
+
+        public ICouponRepository Coupon { get; private set; }
+
         private AppDbContext _db;
         public UnitOfWork(AppDbContext db)
         {
@@ -37,6 +43,10 @@ namespace ClickMart.DataAccess.Repository
             Reviews = new ReviewRepository(this._db);
             Company = new CompanyRepository(this._db);
             Cart = new CartRepository(this._db);
+            OrderHeader = new OrderHeaderRepository(this._db);
+            OrderDetail = new OrderDetailRepository(this._db);
+            Coupon = new CouponRepository(this._db);
+
         }
         public void Save()
         {

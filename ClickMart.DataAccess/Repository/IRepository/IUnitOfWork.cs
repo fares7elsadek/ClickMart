@@ -22,6 +22,12 @@ namespace ClickMart.DataAccess.Repository.IRepository
         ICompanyRepository Company { get; }
 
         ICartRepository Cart { get; }
+
+        IOrderHeaderRepository OrderHeader { get; }
+
+        IOrderDetailRepository OrderDetail { get; }
+
+        ICouponRepository Coupon { get; }
         void Save();
     }
 }

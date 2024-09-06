@@ -45,5 +45,10 @@ namespace ClickMart.Models.Models
         public List<Reviews> Reviews { get; set; } = new List<Reviews>();
 
         public List<Cart> carts { get; set; } = new List<Cart>();
+
+        public List<OrderDetails> OrderDetails { get; set; } = new List<OrderDetails>();
+
+        public List<Coupons> Coupons { get; set; } = new List<Coupons>();
+        public List<ProductCoupons> ProductCoupons { get; set; } = new List<ProductCoupons>();
     }
 }

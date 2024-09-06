@@ -59,7 +59,8 @@ namespace ClickMart.Areas.Customer.Controllers
             viewModel.Carts = carts;
             return View(viewModel);
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Plus(string Id)
         {
             var cart = _unitOfWork.Cart.GetOrDefalut(c => c.Id == Id);
@@ -74,6 +75,8 @@ namespace ClickMart.Areas.Customer.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Minus(string Id)
         {
             var cart = _unitOfWork.Cart.GetOrDefalut(c => c.Id == Id);
@@ -88,6 +91,8 @@ namespace ClickMart.Areas.Customer.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Remove(string Id)
         {
 			var cart = _unitOfWork.Cart.GetOrDefalut(c => c.Id == Id);
