@@ -10,7 +10,7 @@ namespace ClickMart.Models.Models
 {
     public class Coupons
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         public string code { get; set; }
         [DisplayName("Coupon Name")]
@@ -26,9 +26,9 @@ namespace ClickMart.Models.Models
 
         public DateTime couponEndDate { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public List<OrderHeader> OrderHeaders { get; set; } = new List<OrderHeader>();
 

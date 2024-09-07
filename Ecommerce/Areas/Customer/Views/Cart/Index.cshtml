@@ -103,19 +103,6 @@
                
                 @if (Model.Carts.Any())
                 {
-                    <div class="card mb-3 border shadow-0">
-                        <div class="card-body">
-                            <form>
-                                <div class="form-group">
-                                    <label class="form-label">Have coupon?</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control border" name="" placeholder="Coupon code" />
-                                        <button class="btn btn-light border">Apply</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                     <div class="card shadow-0 border">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
@@ -132,7 +119,7 @@
                             <p class="mb-2 fw-bold">@Model.TotalDiscount.ToString("C")</p>
                         </div>
                         <div class="mt-3">
-                            <a href="#" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
+                                <a asp-action="Index" asp-controller="Order" asp-area="Customer" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
                             <a href="/" class="btn btn-light w-100 border mt-2"> Back to shop </a>
                         </div>
                     </div>

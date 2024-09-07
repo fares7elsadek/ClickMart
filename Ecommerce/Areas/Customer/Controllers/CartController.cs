@@ -57,6 +57,7 @@ namespace ClickMart.Areas.Customer.Controllers
             viewModel.TotalDiscount = DiscountPrice;
             viewModel.Discount = Discount;
             viewModel.Carts = carts;
+
             return View(viewModel);
         }
         [HttpPost]

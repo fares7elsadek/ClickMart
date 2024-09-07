@@ -94,10 +94,10 @@ namespace ClickMart.DataAccess.Data.config
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //builder.HasMany(x => x.Coupons)
-            //    .WithMany(x => x.products)
-            //    .UsingEntity<ProductCoupons>();
-                
+            builder.HasMany(x => x.Coupons)
+                .WithMany(x => x.products)
+                .UsingEntity<ProductCoupons>();
+
             builder.HasData(GetProductData());
         }
 

@@ -1,23 +1,25 @@
-﻿@model List<Category>
-
-@{
-    ViewData["Title"] = "Manage Categories";
+﻿@{
+    ViewData["Title"] = "Manage Coupons";
 }
 @Html.AntiForgeryToken()
 <div class="container">
     <div class="content m-auto mt-5" style="width: 100%;">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Categories</h2>
+            <h2 class="mb-0">Coupons</h2>
             <a class="btn btn-primary rounded-pill d-flex align-items-center" href="@Url.Action("Upsert")">
-                <i class="bi bi-plus-circle me-2"></i> Create New Category
+                <i class="bi bi-plus-circle me-2"></i> Create New Coupon
             </a>
         </div>
         <div class="table-responsive">
-            <table id="CategoryDataTable" class="table table-hover align-middle text-center" style="width:100%">
+            <table id="CouponsDataTable" class="table table-hover align-middle text-center" style="width:100%">
                 <thead class="table-light">
                     <tr>
                         <th scope="col">Code</th>
-                        <th scope="col">Display Order</th>
+                        <th scope="col">Discount value</th>
+                        <th scope="col">Times used</th>
+                        <th scope="col">Max usage</th>
+                        <th scope="col">Coupon Start Date</th>
+                        <th scope="col">Coupon End Date</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -35,5 +37,5 @@
     <partial name="_SidbarPartial" model="@ViewBag.User" />
 }
 @section Scripts {
-    <script src="~/js/Category/CategoryDataTable.js"></script>
+    <script src="~/js/Coupons/CouponsDataTables.js"></script>
 }

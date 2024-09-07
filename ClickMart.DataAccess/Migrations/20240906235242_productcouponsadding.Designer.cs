@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240906172544_init")]
-    partial class init
+    [Migration("20240906235242_productcouponsadding")]
+    partial class productcouponsadding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,6 +235,51 @@ namespace ClickMart.DataAccess.Migrations
                     b.ToTable("Countries", (string)null);
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.Coupons", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)")
+                        .HasDefaultValueSql("newid()");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("date")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<string>("code")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<string>("couponDescription")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar");
+
+                    b.Property<DateTime>("couponEndDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("couponStartDate")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("discountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal");
+
+                    b.Property<int>("maxUsage")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("timesUsed")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coupons", (string)null);
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.Galleries", b =>
                 {
                     b.Property<string>("Id")
@@ -319,6 +364,9 @@ namespace ClickMart.DataAccess.Migrations
                     b.Property<string>("Carrier")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CouponId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -363,6 +411,8 @@ namespace ClickMart.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
+
+                    b.HasIndex("CouponId");
 
                     b.HasIndex("ShippingMethodId");
 
@@ -454,6 +504,21 @@ namespace ClickMart.DataAccess.Migrations
                     b.HasIndex("AttributeId");
 
                     b.ToTable("ProductAttributes", (string)null);
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
+                {
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CouponId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ProductId", "CouponId");
+
+                    b.HasIndex("CouponId");
+
+                    b.ToTable("ProductCoupons", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
@@ -827,6 +892,11 @@ namespace ClickMart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("ClickMart.Models.Models.Coupons", "Coupons")
+                        .WithMany("OrderHeaders")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("ClickMart.Models.Models.ShippingMethod", "ShippingMethod")
                         .WithMany("OrderHeaders")
                         .HasForeignKey("ShippingMethodId")
@@ -840,6 +910,8 @@ namespace ClickMart.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Address");
+
+                    b.Navigation("Coupons");
 
                     b.Navigation("ShippingMethod");
 
@@ -874,6 +946,25 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("attribute");
+                });
+
+            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Coupons", "Coupon")
+                        .WithMany("ProductCoupons")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClickMart.Models.Models.Product", "Product")
+                        .WithMany("ProductCoupons")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Coupon");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
@@ -979,6 +1070,13 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("Address");
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.Coupons", b =>
+                {
+                    b.Navigation("OrderHeaders");
+
+                    b.Navigation("ProductCoupons");
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.OrderHeader", b =>
                 {
                     b.Navigation("OrderDetails");
@@ -991,6 +1089,8 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("OrderDetails");
 
                     b.Navigation("ProductAttributes");
+
+                    b.Navigation("ProductCoupons");
 
                     b.Navigation("Reviews");
 

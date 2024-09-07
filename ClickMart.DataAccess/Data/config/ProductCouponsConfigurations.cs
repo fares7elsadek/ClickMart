@@ -13,7 +13,8 @@ namespace ClickMart.DataAccess.Data.config
     {
         public void Configure(EntityTypeBuilder<ProductCoupons> builder)
         {
-            builder.HasKey(x => new { x.CouponId, x.ProductId });
+            builder.HasKey(x => new { x.ProductId, x.CouponId });
+            builder.ToTable(nameof(ProductCoupons));
         }
     }
 }

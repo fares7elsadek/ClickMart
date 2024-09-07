@@ -1,0 +1,45 @@
+﻿@model Coupons
+@{
+    ViewData["Title"] = "Add Coupon";
+}
+
+<div class="container">
+    <div class="content m-auto mt-5 p-4 border rounded-3 shadow-sm" style="max-width: 600px;">
+        <h2 class="mb-4 text-center">Add Coupon</h2>
+
+        <!-- Validation Summary -->
+        <div asp-validation-summary="All" class="alert"></div>
+
+        <!-- Form -->
+        <form asp-action="AddToProduct">
+            <!-- Hidden Field -->
+            <input type="hidden" name="productId" value="@ViewBag.ProductId" />
+
+            <!-- Coupon Selection -->
+            <div class="mb-3">
+                <label class="form-label">Coupons</label>
+                <select name="couponId" class="form-select" asp-items="ViewBag.Coupon">
+                    <option disabled selected>--Select coupon--</option>
+                </select>
+            </div>
+
+            <!-- Buttons (Back and Save) -->
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Coupon
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Navbar {
+    <partial name="_NavbarPartial" model="@ViewBag.User" />
+}
+
+@section Sidebar {
+    <partial name="_SidbarPartial" model="@ViewBag.User" />
+}

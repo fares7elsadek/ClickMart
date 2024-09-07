@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240906173018_coupons-configurations")]
-    partial class couponsconfigurations
+    [Migration("20240906234326_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -242,12 +242,12 @@ namespace ClickMart.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("newid()");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("date")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("date");
 
                     b.Property<string>("code")
@@ -506,26 +506,6 @@ namespace ClickMart.DataAccess.Migrations
                     b.ToTable("ProductAttributes", (string)null);
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
-                {
-                    b.Property<string>("CouponId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CouponsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CouponId", "ProductId");
-
-                    b.HasIndex("CouponsId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductCoupons");
-                });
-
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
                 {
                     b.Property<string>("Id")
@@ -687,21 +667,6 @@ namespace ClickMart.DataAccess.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("CouponsProduct", b =>
-                {
-                    b.Property<string>("CouponsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("productsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CouponsId", "productsId");
-
-                    b.HasIndex("productsId");
-
-                    b.ToTable("CouponsProduct");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -968,19 +933,6 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("attribute");
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
-                {
-                    b.HasOne("ClickMart.Models.Models.Coupons", null)
-                        .WithMany("ProductCoupons")
-                        .HasForeignKey("CouponsId");
-
-                    b.HasOne("ClickMart.Models.Models.Product", null)
-                        .WithMany("ProductCoupons")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
                 {
                     b.HasOne("ClickMart.Models.Models.Product", "Product")
@@ -1006,21 +958,6 @@ namespace ClickMart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("CouponsProduct", b =>
-                {
-                    b.HasOne("ClickMart.Models.Models.Coupons", null)
-                        .WithMany()
-                        .HasForeignKey("CouponsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClickMart.Models.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("productsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1102,8 +1039,6 @@ namespace ClickMart.DataAccess.Migrations
             modelBuilder.Entity("ClickMart.Models.Models.Coupons", b =>
                 {
                     b.Navigation("OrderHeaders");
-
-                    b.Navigation("ProductCoupons");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.OrderHeader", b =>
@@ -1118,8 +1053,6 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("OrderDetails");
 
                     b.Navigation("ProductAttributes");
-
-                    b.Navigation("ProductCoupons");
 
                     b.Navigation("Reviews");
 

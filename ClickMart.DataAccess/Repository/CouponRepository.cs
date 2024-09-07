@@ -15,7 +15,17 @@ namespace ClickMart.DataAccess.Repository
 
         public void Update(Coupons coupon)
         {
-           this._db.Coupons.Update(coupon);
+           Coupons newCoupon = this._db.Coupons.FirstOrDefault(c => c.Id==coupon.Id);
+            if (newCoupon != null)
+            {
+                newCoupon.code = coupon.code;
+                newCoupon.couponDescription = coupon.couponDescription;
+                newCoupon.couponStartDate = coupon.couponStartDate;
+                newCoupon.couponEndDate = coupon.couponEndDate;
+                newCoupon.maxUsage = coupon.maxUsage;
+                newCoupon.discountValue = coupon.discountValue;
+                this._db.Coupons.Update(newCoupon);
+            }          
         }
     }
 }

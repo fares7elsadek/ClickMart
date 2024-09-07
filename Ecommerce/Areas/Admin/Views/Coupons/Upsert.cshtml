@@ -1,0 +1,74 @@
+﻿@model Coupons
+
+@{
+    @if (Model?.Id != null)
+    {
+        ViewData["Title"] = "Update Coupon";
+    }
+    else
+    {
+        ViewData["Title"] = "Create new Coupon";
+    }
+}
+
+<div class="container">
+    <div class="content m-auto mt-5 p-4 border rounded-3 shadow-sm" style="max-width: 600px;">
+        @if (Model?.Id != null)
+        {
+            <h2 class="mb-4 text-center">Update Coupon</h2>
+        }
+        else
+        {
+            <h2 class="mb-4 text-center">Create new Coupon</h2>
+        }
+        <div asp-validation-summary="All"></div>
+        <form asp-action="Upsert">
+            <div class="mb-3">
+                <label asp-for="code" class="form-label">Code</label>
+                <input asp-for="code" class="form-control" placeholder="Enter coupon code" required>
+                <span class="text-danger" asp-validation-for="code"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="discountValue" class="form-label">Discount value</label>
+                <input asp-for="discountValue" class="form-control" placeholder="Enter Discount value" required>
+                <span class="text-danger" asp-validation-for="discountValue"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="couponDescription" class="form-label">Description</label>
+                <input asp-for="couponDescription" class="form-control" placeholder="Enter coupon description">
+                <span class="text-danger" asp-validation-for="couponDescription"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="maxUsage" class="form-label">Maxu usage</label>
+                <input asp-for="maxUsage" class="form-control" placeholder="Enter max usage" required>
+                <span class="text-danger" asp-validation-for="maxUsage"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="couponStartDate" class="form-label">Start date</label>
+                <input asp-for="couponStartDate" class="form-control" placeholder="Enter coupon start date" required>
+                <span class="text-danger" asp-validation-for="couponStartDate"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="couponEndDate" class="form-label">End date</label>
+                <input asp-for="couponEndDate" class="form-control" placeholder="Enter coupon end date" required>
+                <span class="text-danger" asp-validation-for="couponEndDate"></span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <a href="@Url.Action("Index", "Coupons")" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Coupon
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Navbar {
+    <partial name="_NavbarPartial" model="@ViewBag.User" />
+}
+
+@section Sidebar {
+    <partial name="_SidbarPartial" model="@ViewBag.User" />
+}

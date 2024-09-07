@@ -1,39 +1,31 @@
-﻿var dataTable;
+﻿var CouponsDataTable;
 $(document).ready(function () {
-    loadDataTable();
+    loadCouponsDataTable();
 });
 
-function loadDataTable() {
-    dataTable = $('#datatable').DataTable({
-        "ajax": { url: '/Admin/Product/getallproducts' },
+function loadCouponsDataTable() {
+    CouponsDataTable = $('#CouponsDataTable').DataTable({
+        "ajax": { url: '/Admin/Coupons/GetAllCoupons' },
         "columns": [
-            { data: "title", "width": "30%" },
-            { data: "price", "width": "10%" },
-            { data: "category.name", "width": "15%" },
-            {
-                data: "published",
-                "render": function (data) {
-                    return data ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Not Active</span>';
-                },
-                "width": "10%"
-            },
+            { data: "code", "width": "10%" },
+            { data: "discountValue", "width": "10%" },
+            { data: "timesUsed", "width": "10%" },
+            { data: "maxUsage", "width": "10%" },
+            { data: "couponStartDate", "width": "10%" },
+            { data: "couponEndDate", "width": "10%" },
             {
                 data: "id",
                 "render": function (data) {
                     return `
-                         <a class="btn btn-info me-2" href="/Admin/Product/Upsert/${data}">
+                         <a class="btn btn-info me-2" href="/Admin/Coupons/Upsert/${data}">
                               <i class="bi bi-pencil-square"></i> Edit
                          </a>
-                         <a class="btn btn-info me-2" href="/Admin/Coupons/AddToProduct?productId=${data}">
-                              <i class="bi bi-pencil-square"></i> Add Coupon
-                         </a>
-                        <a onClick=Delete('/Admin/Product/Delete/${data}') class="btn btn-danger">
+                        <a onClick=Delete('/Admin/Coupons/Delete/${data}') class="btn btn-danger">
                             <i class="bi bi-trash"></i> Delete
                         </a>
-                        
                     `;
                 },
-               
+                /*"width": "30%"*/
             }
         ]
     });
@@ -59,7 +51,7 @@ function Delete(url) {
                 },
                 success: function (data) {
                     if (data.success) {
-                        dataTable.ajax.reload();
+                        CouponsDataTable.ajax.reload();
                         toastr.success(data.message);
                     } else {
                         toastr.error(data.message);

@@ -37,6 +37,12 @@
                class="nav-item nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Company" ? "active" : "")">
                 <i class="fa fa-building me-2"></i>Companies
             </a>
+
+            <!-- Manage Coupons -->
+            <a asp-action="Index" asp-controller="Coupons" asp-area="Admin"
+               class="nav-item nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Coupons" ? "active" : "")">
+                <i class="fa fa-ticket-alt me-2"></i>Coupons
+            </a>
         </div>
     </nav>
 </div>

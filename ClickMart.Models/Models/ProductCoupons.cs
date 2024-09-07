@@ -11,5 +11,9 @@ namespace ClickMart.Models.Models
         public string ProductId { get; set; }
 
         public string CouponId { get; set; }
+
+        public Product Product { get; set; }
+
+        public Coupons Coupon { get; set; }
     }
 }
