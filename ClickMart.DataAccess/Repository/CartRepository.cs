@@ -1,6 +1,7 @@
 ﻿using ClickMart.DataAccess.Data;
 using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace ClickMart.DataAccess.Repository
         public CartRepository(AppDbContext db):base(db) 
         {
             this._db = db;
+        }
+
+        public void DeleteCart()
+        {
+            _db.Database.ExecuteSqlRaw("DELETE FROM CARTS");
         }
         public void Update(Cart cart)
         {

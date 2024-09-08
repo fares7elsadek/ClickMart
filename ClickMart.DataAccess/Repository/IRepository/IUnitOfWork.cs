@@ -28,6 +28,10 @@ namespace ClickMart.DataAccess.Repository.IRepository
         IOrderDetailRepository OrderDetail { get; }
 
         ICouponRepository Coupon { get; }
+
+        IShippingMethodRepository ShippingMethod { get; }
+
+        IAddressRepository Address { get; }
         void Save();
     }
 }

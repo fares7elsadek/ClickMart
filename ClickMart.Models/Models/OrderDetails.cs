@@ -9,9 +9,9 @@ namespace ClickMart.Models.Models
 {
     public class OrderDetails
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [Required]
-        public string OrderHeaderId { get; set; }
+        public string? OrderHeaderId { get; set; }
 
         public OrderHeader OrderHeader { get; set; }
 
@@ -19,9 +19,8 @@ namespace ClickMart.Models.Models
 
         public Product Product { get; set; }
 
-
         public int qty { get; set; }
 
-        public double Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

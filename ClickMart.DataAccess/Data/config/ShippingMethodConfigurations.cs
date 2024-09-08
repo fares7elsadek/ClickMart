@@ -17,7 +17,7 @@ namespace ClickMart.DataAccess.Data.config
             builder.Property(x => x.Id)
                 .HasDefaultValueSql("newid()");
 
-            builder.ToTable("ShippingMethods");
+            builder.ToTable("ShippingMethod");
 
             builder.Property(x => x.Name)
                 .HasColumnType("varchar")
@@ -31,6 +31,10 @@ namespace ClickMart.DataAccess.Data.config
                 .HasColumnType("decimal")
                 .HasPrecision(18, 2)
                 .IsRequired();
+
+            builder.Property(x => x.Default)
+                .HasColumnType("bit")
+                .HasDefaultValue(false);
 
             //builder.HasData(LoadData());
         }

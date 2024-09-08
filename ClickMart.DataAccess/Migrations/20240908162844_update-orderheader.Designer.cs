@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240906235242_productcouponsadding")]
-    partial class productcouponsadding
+    [Migration("20240908162844_update-orderheader")]
+    partial class updateorderheader
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,6 +123,10 @@ namespace ClickMart.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("newid()");
+
+                    b.Property<decimal?>("CouponDiscount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal");
 
                     b.Property<string>("ProductId")
                         .IsRequired()
@@ -367,14 +371,10 @@ namespace ClickMart.DataAccess.Migrations
                     b.Property<string>("CouponId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("OrderDate")
+                    b.Property<DateTime?>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("OrderDetailsId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrderStatus")
                         .HasColumnType("nvarchar(max)");
@@ -382,10 +382,10 @@ namespace ClickMart.DataAccess.Migrations
                     b.Property<double>("OrderTotal")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("PaymentDueDate")
+                    b.Property<DateOnly?>("PaymentDueDate")
                         .HasColumnType("date");
 
                     b.Property<string>("PaymentIntentId")
@@ -394,7 +394,7 @@ namespace ClickMart.DataAccess.Migrations
                     b.Property<string>("PaymentStatus")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ShippingDate")
+                    b.Property<DateTime?>("ShippingDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ShippingMethodId")
@@ -580,6 +580,11 @@ namespace ClickMart.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<bool>("Default")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -595,7 +600,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ShippingMethods", (string)null);
+                    b.ToTable("ShippingMethod", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.User", b =>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240906234326_init")]
-    partial class init
+    [Migration("20240908215552_somechanges-in-orderdetails")]
+    partial class somechangesinorderdetails
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,6 +123,10 @@ namespace ClickMart.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("newid()");
+
+                    b.Property<decimal?>("CouponDiscount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal");
 
                     b.Property<string>("ProductId")
                         .IsRequired()
@@ -331,8 +335,8 @@ namespace ClickMart.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ProductId")
                         .IsRequired()
@@ -367,25 +371,24 @@ namespace ClickMart.DataAccess.Migrations
                     b.Property<string>("CouponId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("OrderDate")
+                    b.Property<string>("CustomerMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<string>("OrderDetailsId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("OrderStatus")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("OrderTotal")
-                        .HasColumnType("float");
+                    b.Property<decimal>("OrderTotal")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("PaymentDate")
+                    b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("PaymentDueDate")
+                    b.Property<DateOnly?>("PaymentDueDate")
                         .HasColumnType("date");
 
                     b.Property<string>("PaymentIntentId")
@@ -394,7 +397,7 @@ namespace ClickMart.DataAccess.Migrations
                     b.Property<string>("PaymentStatus")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ShippingDate")
+                    b.Property<DateTime?>("ShippingDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ShippingMethodId")
@@ -506,6 +509,21 @@ namespace ClickMart.DataAccess.Migrations
                     b.ToTable("ProductAttributes", (string)null);
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
+                {
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CouponId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ProductId", "CouponId");
+
+                    b.HasIndex("CouponId");
+
+                    b.ToTable("ProductCoupons", (string)null);
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
                 {
                     b.Property<string>("Id")
@@ -565,6 +583,11 @@ namespace ClickMart.DataAccess.Migrations
                         .HasColumnType("nvarchar(450)")
                         .HasDefaultValueSql("newid()");
 
+                    b.Property<bool>("Default")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -580,7 +603,7 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ShippingMethods", (string)null);
+                    b.ToTable("ShippingMethod", (string)null);
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.User", b =>
@@ -933,6 +956,25 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("attribute");
                 });
 
+            modelBuilder.Entity("ClickMart.Models.Models.ProductCoupons", b =>
+                {
+                    b.HasOne("ClickMart.Models.Models.Coupons", "Coupon")
+                        .WithMany("ProductCoupons")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClickMart.Models.Models.Product", "Product")
+                        .WithMany("ProductCoupons")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Coupon");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
                 {
                     b.HasOne("ClickMart.Models.Models.Product", "Product")
@@ -1039,6 +1081,8 @@ namespace ClickMart.DataAccess.Migrations
             modelBuilder.Entity("ClickMart.Models.Models.Coupons", b =>
                 {
                     b.Navigation("OrderHeaders");
+
+                    b.Navigation("ProductCoupons");
                 });
 
             modelBuilder.Entity("ClickMart.Models.Models.OrderHeader", b =>
@@ -1053,6 +1097,8 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("OrderDetails");
 
                     b.Navigation("ProductAttributes");
+
+                    b.Navigation("ProductCoupons");
 
                     b.Navigation("Reviews");
 

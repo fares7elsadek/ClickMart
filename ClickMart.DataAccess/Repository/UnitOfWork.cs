@@ -31,6 +31,10 @@ namespace ClickMart.DataAccess.Repository
 
         public ICouponRepository Coupon { get; private set; }
 
+        public IShippingMethodRepository ShippingMethod { get; private set; }
+
+        public IAddressRepository Address { get; private set; }
+
         private AppDbContext _db;
         public UnitOfWork(AppDbContext db)
         {
@@ -46,6 +50,8 @@ namespace ClickMart.DataAccess.Repository
             OrderHeader = new OrderHeaderRepository(this._db);
             OrderDetail = new OrderDetailRepository(this._db);
             Coupon = new CouponRepository(this._db);
+            ShippingMethod = new ShippingMethodRepository(this._db);
+            Address = new AddressRepository(this._db);
 
         }
         public void Save()

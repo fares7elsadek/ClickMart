@@ -13,5 +13,11 @@ namespace ClickMart.ViewModels.Carts
         public decimal Discount { get; set; }
 
         public List<Product> RecommendedProducts { get; set; }
+
+        public bool coupon {  get; set; }
+        public decimal CouponDisocunt { get; set; }
+
+        public List<ShippingMethod> ShippingMethods { get; set; }
+        public decimal ShippingCost { get; set; }
     }
 }

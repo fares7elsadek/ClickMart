@@ -15,6 +15,8 @@ namespace ClickMart.Models.Models
         public decimal Price { get; set; }
 
         public string Description { get; set; }
+
+        public bool Default { get; set; }
         public List<OrderHeader> OrderHeaders { get; set; }
     }
 }

@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ClickMart.DataAccess.Repository.IRepository
 {
-    public interface ICartRepository: IRepository<Cart>
+    public interface IShippingMethodRepository: IRepository<ShippingMethod>
     {
-        void Update(Cart cart);
-        void DeleteCart();
+        void Update(ShippingMethod shippingMethod);
     }
 }

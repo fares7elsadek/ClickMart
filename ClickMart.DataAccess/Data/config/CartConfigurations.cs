@@ -26,6 +26,11 @@ namespace ClickMart.DataAccess.Data.config
 
             builder.ToTable(t => t.HasCheckConstraint("CK_QuantityNotNegative", "[Quantity]>=0"));
 
+            builder.Property(x => x.CouponDiscount)
+                .HasColumnType("decimal")
+                .HasPrecision(18, 2);
+                
+
         }
     }
 }
