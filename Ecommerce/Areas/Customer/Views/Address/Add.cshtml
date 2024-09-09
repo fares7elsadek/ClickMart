@@ -82,11 +82,10 @@
                 <span asp-validation-for="CountryId" class="text-danger"></span>
             </div>
 
-            <!-- IsDefault -->
-            <div class="mb-3 form-check">
-                <input asp-for="IsDefault" class="form-check-input" />
-                <label asp-for="IsDefault" class="form-check-label">Set as Default Address</label>
-            </div>
+            
+            <input asp-for="IsDefault" value="false" class="form-check-input"  hidden/>
+               
+
 
             <!-- Submit Button -->
             <div class="d-grid mt-4">

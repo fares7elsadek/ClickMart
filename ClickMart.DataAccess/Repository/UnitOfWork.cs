@@ -1,5 +1,7 @@
 ﻿using ClickMart.DataAccess.Data;
 using ClickMart.DataAccess.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -11,6 +13,8 @@ namespace ClickMart.DataAccess.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private IDbContextTransaction _transaction;
+
         public ICategoryRepository Category { get; private set; }
         public IProductRepository Product { get; private set; }
         public IAttributesRepository Attributes { get; private set; }
@@ -35,7 +39,7 @@ namespace ClickMart.DataAccess.Repository
 
         public IAddressRepository Address { get; private set; }
 
-        private AppDbContext _db;
+        private readonly AppDbContext _db;
         public UnitOfWork(AppDbContext db)
         {
             this._db = db;
@@ -58,5 +62,40 @@ namespace ClickMart.DataAccess.Repository
         {
             this._db.SaveChanges();
         }
+
+        public IDbContextTransaction BeginTransaction()
+        {
+            _transaction = _db.Database.BeginTransaction();
+            return _transaction;
+        }
+
+        public void Commit()
+        {
+            try
+            {
+                Save();  
+                _transaction.Commit();
+            }
+            catch
+            {
+                _transaction.Rollback();
+                throw;
+            }
+            finally
+            {
+                _transaction.Dispose();
+            }
+        }
+        public void Rollback()
+        {
+            _transaction.Rollback();
+            _transaction.Dispose();
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
+        }
+
     }
 }

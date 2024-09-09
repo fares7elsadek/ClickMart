@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -40,7 +41,8 @@ namespace ClickMart.Models.Models
         public string ShippingMethodId { get; set; }
 
         public ShippingMethod? ShippingMethod { get; set; }
-
+        [DisplayName("Address")]
+        [Required(ErrorMessage = "You must spacify you address")]
         public string AddressId { get; set; }
 
         public string? CouponId { get; set; }

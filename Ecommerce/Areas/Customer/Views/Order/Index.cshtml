@@ -49,6 +49,7 @@
                                 </div>
                             }
                         </div>
+                        <div asp-validation-summary="All"></div>
                         <h5 class="card-title mb-3">Address</h5>
                         <div class="row">
                             @foreach (var Address in Model.AddressList)
@@ -66,6 +67,17 @@
                                     </div>
                                 </div>
                             }
+                            <div class="col-lg-4 mb-3">
+                                <!-- Default checked radio -->
+                                <div class="form-check h-100 border rounded-3">
+                                    <div class="p-3">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                            Add new address <br />
+                                            <a asp-action="Add" asp-controller="Address" class="text-muted"> Add new </a>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <form asp-action="OrderConfirmation">
 							<div class="mb-3">

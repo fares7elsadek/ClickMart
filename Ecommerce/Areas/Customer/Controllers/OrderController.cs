@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using NuGet.Protocol;
+using Stripe;
 using Stripe.Checkout;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ClickMart.Areas.Customer.Controllers
 {
@@ -24,143 +26,170 @@ namespace ClickMart.Areas.Customer.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            OrderHeader orderHeader = new OrderHeader();
             var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
             var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Product").ToList();
-            if(carts.Count == 0)
+            if (carts.Count == 0)
             {
                 return RedirectToAction("Index", "Home");
             }
-            orderHeader.UserId = userId;
-            decimal totalPrice = 0;
-            decimal totalPriceAfterDiscount = 0;
+
+            var orderHeader = new OrderHeader { UserId = userId };
+            var (totalPrice, totalPriceAfterDiscount) = CalculateOrderTotals(carts);
+
+            var shippingMethods = _unitOfWork.ShippingMethod.GetAll().ToList();
+            var shippingMethod = shippingMethods.FirstOrDefault(x => x.Default);
+
+            if (shippingMethod == null)
+            {
+                ModelState.AddModelError(string.Empty, "No default shipping method found.");
+                return View();
+            }
+
+            orderHeader.OrderTotal = totalPriceAfterDiscount + shippingMethod.Price;
+            orderHeader.ShippingMethodId = shippingMethod.Id;
+
+            var addresses = _unitOfWork.Address.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Country").ToList();
+            var defaultAddress = addresses.FirstOrDefault(a => a.IsDefault);
+
+            if (defaultAddress != null)
+            {
+                orderHeader.AddressId = defaultAddress.Id;
+            }
+
+            var viewModel = new OrderViewModel
+            {
+                ShippingCost = shippingMethod.Price,
+                FirstTotalPrice = totalPrice,
+                DiscountAmount = totalPrice - totalPriceAfterDiscount,
+                Carts = carts,
+                ShippingMethods = shippingMethods,
+                Header = orderHeader,
+                AddressList = addresses
+            };
+
+            return View(viewModel);
+        }
+
+        private (decimal totalPrice, decimal totalPriceAfterDiscount) CalculateOrderTotals(IEnumerable<Cart> carts)
+        {
+            decimal totalPrice = 0, totalPriceAfterDiscount = 0;
             foreach (var cart in carts)
             {
                 if (cart.Product == null) continue;
-                totalPrice += (cart.Quantity * cart.Product.Price);
-                totalPriceAfterDiscount += (cart.Quantity * cart.Product.DiscountPrice);
+                totalPrice += cart.Quantity * cart.Product.Price;
+                totalPriceAfterDiscount += cart.Quantity * cart.Product.DiscountPrice;
             }
-            var shippingMethods = _unitOfWork.ShippingMethod.GetAll().ToList();
-            var shippingMethod = shippingMethods.Where(x => x.Default).FirstOrDefault();
-            var totalPriceAfterAddingShippingCost = totalPriceAfterDiscount + shippingMethod.Price;
-            orderHeader.OrderTotal = totalPriceAfterAddingShippingCost;
-            orderHeader.ShippingMethodId = shippingMethod.Id;
-            orderHeader.AddressId = _unitOfWork.Address.GetOrDefalut(a => a.IsDefault &&
-            a.UserId == userId).Id;
-            var DiscountAmount = totalPrice - totalPriceAfterDiscount;
-            OrderViewModel viewModel = new OrderViewModel();
-            viewModel.ShippingCost = shippingMethod.Price;
-            viewModel.FirstTotalPrice = totalPrice;
-            viewModel.DiscountAmount = DiscountAmount;
-            viewModel.Carts = carts;
-            viewModel.ShippingMethods = shippingMethods;
-            viewModel.Header = orderHeader;
-            var Address = _unitOfWork.Address.GetAll(IncludeProperties:"Country").ToList();
-            viewModel.AddressList = Address;
-            return View(viewModel);
+            return (totalPrice, totalPriceAfterDiscount);
         }
 
 
         [HttpGet]
         public IActionResult IndexCoupon(string coupon)
         {
-            OrderHeader orderHeader = new OrderHeader();
             var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Product").ToList();
-            orderHeader.UserId = userId;
-            decimal totalPrice = 0;
-            decimal totalPriceAfterDiscount = 0;
-            foreach (var cart in carts)
+            if (userId == null)
             {
-                if (cart.Product == null) continue;
-                totalPrice += (cart.Quantity * cart.Product.Price);
-                totalPriceAfterDiscount += (cart.Quantity * cart.Product.DiscountPrice);
+                return Unauthorized();
             }
+
+            var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Product.Coupons").ToList();
+            if (carts.Count == 0)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var orderHeader = new OrderHeader { UserId = userId };
+            var (totalPrice, totalPriceAfterDiscount) = CalculateOrderTotals(carts);
+
             var shippingMethods = _unitOfWork.ShippingMethod.GetAll().ToList();
-            var shippingMethod = shippingMethods.Where(x => x.Default).FirstOrDefault();
-            var totalPriceAfterAddingShippingCost = totalPriceAfterDiscount + shippingMethod.Price;
+            var shippingMethod = shippingMethods.FirstOrDefault(x => x.Default);
+
+            if (shippingMethod == null)
+            {
+                ModelState.AddModelError(string.Empty, "No default shipping method found.");
+                return View();
+            }
+
+            orderHeader.OrderTotal = totalPriceAfterDiscount + shippingMethod.Price;
             orderHeader.ShippingMethodId = shippingMethod.Id;
-            orderHeader.AddressId = _unitOfWork.Address.GetOrDefalut(a => a.IsDefault &&
-            a.UserId == userId).Id;
-            var DiscountAmount = totalPrice - totalPriceAfterDiscount;
-            OrderViewModel viewModel = new OrderViewModel();
-            viewModel.ShippingCost = shippingMethod.Price;
-            viewModel.FirstTotalPrice = totalPrice;
-            viewModel.DiscountAmount = DiscountAmount;
-            viewModel.Carts = carts;
-            viewModel.ShippingMethods = shippingMethods;
-            viewModel.Header = orderHeader;
-            var Address = _unitOfWork.Address.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Country").ToList();
-            viewModel.AddressList = Address;
-      
-            decimal couponDiscount = 0;
-            bool isCouponValid = false;
+
+            var addresses = _unitOfWork.Address.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Country").ToList();
+            var defaultAddress = addresses.FirstOrDefault(a => a.IsDefault);
+            if (defaultAddress != null)
+            {
+                orderHeader.AddressId = defaultAddress.Id;
+            }
+
             var products = _unitOfWork.Product.GetAll(IncludeProperties: "Coupons").ToList();
-            if (!string.IsNullOrEmpty(coupon))
-            {
-                isCouponValid = ValidateCoupon(coupon, products, ref couponDiscount);
-            }
-            decimal totalAfterCoupons = 0;
-            decimal CouponDiscountAmount = 0;
-            if (isCouponValid)
-            {
-                totalAfterCoupons = couponDiscount + shippingMethod.Price;
-                CouponDiscountAmount =totalPriceAfterDiscount - couponDiscount;
-                viewModel.CouponCode=coupon;
-                viewModel.coupon = true;
-                viewModel.Header.CouponId = _unitOfWork.Coupon.GetOrDefalut(x => x.code == coupon).Id;
-            }
-            else
+            decimal couponDiscount = 0;
+            bool isCouponValid = !string.IsNullOrEmpty(coupon) && ValidateCoupon(coupon, carts, ref couponDiscount);
+
+            if (!isCouponValid)
             {
                 TempData["Error"] = "Invalid coupon code";
                 return RedirectToAction("Index");
             }
-            viewModel.CouponDiscount = CouponDiscountAmount;
-            viewModel.Header.OrderTotal= totalAfterCoupons;
 
-            return View("Index",viewModel);
+            var totalAfterCoupons = totalPriceAfterDiscount - couponDiscount + shippingMethod.Price;
+            orderHeader.OrderTotal = totalAfterCoupons;
+
+            var viewModel = new OrderViewModel
+            {
+                ShippingCost = shippingMethod.Price,
+                FirstTotalPrice = totalPrice,
+                DiscountAmount = totalPrice - totalPriceAfterDiscount,
+                CouponCode = coupon,
+                CouponDiscount = couponDiscount,
+                Header = orderHeader,
+                Carts = carts,
+                ShippingMethods = shippingMethods,
+                AddressList = addresses,
+                coupon = true
+            };
+
+            return View("Index", viewModel);
         }
 
 
-        private bool ValidateCoupon(string coupon, List<Product> products, ref decimal couponDiscount)
+        private bool ValidateCoupon(string coupon, List<Cart> carts, ref decimal couponDiscount)
         {
-            bool valid = false;
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId,
-                IncludeProperties: "Product");
+            var valid = false;
             foreach (var cart in carts)
             {
-                var productWithCoupons = products.FirstOrDefault(x => x.Id == cart.Product.Id);
-                if (productWithCoupons != null && productWithCoupons.Coupons != null)
+                var productCoupons = cart.Product.Coupons;
+                var couponObj = productCoupons?.FirstOrDefault(c => c.code == coupon);
+
+                if (couponObj != null)
                 {
-                    var couponObj = productWithCoupons.Coupons.FirstOrDefault(c => c.code == coupon);
-                    if (couponObj != null)
-                    {
-                       
-                        couponDiscount += (cart.Quantity * cart.Product.DiscountPrice)
-                                          * (1 - couponObj.discountValue / 100);
-                        cart.TotalPriceAfterCoupon = (cart.Quantity * cart.Product.DiscountPrice)
-                            - (cart.Quantity * cart.Product.DiscountPrice) * (couponObj.discountValue / 100);
-                        valid = true;
-                    }
-                    else
-                    {
-                        couponDiscount += (cart.Quantity * cart.Product.DiscountPrice);
-                    }
+                    couponDiscount += (cart.Quantity * cart.Product.DiscountPrice) * (couponObj.discountValue / 100);
+                    cart.TotalPriceAfterCoupon = (cart.Quantity * cart.Product.DiscountPrice) -
+                                                  (cart.Quantity * cart.Product.DiscountPrice) * (couponObj.discountValue / 100);
+                    valid = true;
                 }
             }
+
             if (valid)
             {
                 _unitOfWork.Save();
-                return true;
             }
-            else
-            {
-                return false;
-            }
+            return valid;
         }
 
         [HttpPost]
@@ -239,136 +268,160 @@ namespace ClickMart.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult OrderConfirmation(OrderHeader model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var orderHeader = model;
-                Random random = new Random();
-                int sixDigitNumber = random.Next(100000, 1000000);
-                orderHeader.TrackingNumber = sixDigitNumber.ToString();
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                TempData["Error"] = string.Join("; ", errors);
+                return RedirectToAction("Index");
+            }
 
-                var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId,IncludeProperties: "Product").ToList();
-                if(carts.Count > 0)
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Product").ToList();
+            if (carts.Count == 0)
+            {
+                TempData["Error"] = "The cart is empty";
+                return RedirectToAction("Index");
+            }
+
+            var orderHeader = model;
+            orderHeader.TrackingNumber = Guid.NewGuid().ToString();
+
+            using (var transaction = _unitOfWork.BeginTransaction())
+            {
+                try
                 {
                     foreach (var cart in carts)
                     {
-                        OrderDetails details = new OrderDetails();
-                        details.ProductId = cart.ProductId;
-                        details.qty = cart.Quantity;
-                        details.Price = cart.Product.Price;
+                        var details = new OrderDetails
+                        {
+                            ProductId = cart.ProductId,
+                            qty = cart.Quantity,
+                            Price = cart.Product.Price
+                        };
                         orderHeader.OrderDetails.Add(details);
                     }
+
                     var orderHeaderId = Guid.NewGuid().ToString();
                     orderHeader.Id = orderHeaderId;
+
                     _unitOfWork.OrderHeader.Add(orderHeader);
                     _unitOfWork.OrderHeader.UpdateStatus(orderHeaderId, SD.StatusPending, SD.StatusPending);
                     _unitOfWork.Save();
+
+                    
                     string domain = "http://localhost:5052/";
                     var options = new Stripe.Checkout.SessionCreateOptions
                     {
-                        SuccessUrl = domain+ $"Customer/Order/OrderConfirmationPage/{orderHeaderId}",
-                        CancelUrl = domain+ "Customer/Cart",
-                        LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
-                        Mode = "payment",
-                    };
-
-                    foreach(var item in carts)
-                    {
-                        var sessionLineItem = new SessionLineItemOptions
+                        SuccessUrl = domain + $"Customer/Order/OrderConfirmationPage/{orderHeaderId}",
+                        CancelUrl = domain + "Customer/Cart",
+                        LineItems = carts.Select(cart => new SessionLineItemOptions
                         {
                             PriceData = new SessionLineItemPriceDataOptions
                             {
-                                UnitAmount = (long)(item.TotalPriceAfterCoupon!=null ?
-                                item.TotalPriceAfterCoupon*100:item.Product.DiscountPrice*100),
-                                Currency="usd",
-                                ProductData = new SessionLineItemPriceDataProductDataOptions()
+                                UnitAmount = (long)((cart.TotalPriceAfterCoupon ?? cart.Product.DiscountPrice) * 100),
+                                Currency = "usd",
+                                ProductData = new SessionLineItemPriceDataProductDataOptions
                                 {
-                                    Name = item.Product.Title
+                                    Name = cart.Product.Title
                                 }
                             },
-                            Quantity = item.Quantity
-                        };
-                        options.LineItems.Add(sessionLineItem);
-                    }
-                    var shipping = _unitOfWork.ShippingMethod.GetOrDefalut(x => x.Id
-                    == orderHeader.ShippingMethodId);
+                            Quantity = cart.Quantity
+                        }).ToList(),
+                        Mode = "payment"
+                    };
 
+                    
+                    var shipping = _unitOfWork.ShippingMethod.GetOrDefalut(x => x.Id == orderHeader.ShippingMethodId);
                     options.LineItems.Add(new SessionLineItemOptions
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            UnitAmount = (long)(shipping.Price*100),
+                            UnitAmount = (long)(shipping.Price * 100),
                             Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions()
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = shipping.Name
                             }
                         },
                         Quantity = 1
                     });
+
                     var service = new Stripe.Checkout.SessionService();
-                    Session session=service.Create(options);
-                    _unitOfWork.OrderHeader.UpdateStripePaymentId(orderHeaderId,session.Id,session.PaymentIntentId);
+                    var session = service.Create(options);
+                    _unitOfWork.OrderHeader.UpdateStripePaymentId(orderHeaderId, session.Id, session.PaymentIntentId);
                     _unitOfWork.Save();
+
+                    transaction.Commit();
 
                     Response.Headers.Add("Location", session.Url);
                     return new StatusCodeResult(303);
                 }
-                else
+                catch (Exception ex)
                 {
-                    TempData["Error"] = "The cart is empty";
-                    return RedirectToAction("Index");   
+                    transaction.Rollback();
+                    TempData["Error"] = "An error occurred. Please try again.";
+                    return RedirectToAction("Index");
                 }
-                
             }
-            return RedirectToAction("Index");
         }
 
         public IActionResult OrderConfirmationPage(string Id)
         {
-            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(x => x.Id == Id
-            , IncludeProperties: "User");
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            ConfirmationPageViewModel viewModel = new ConfirmationPageViewModel();
-            viewModel.PyamentDate = DateTime.Now;
-            if (orderHeader != null)
-            {
-                if(orderHeader.UserId == userId)
-                {
-                    var service = new SessionService();
-                    Session session = service.Get(orderHeader.SessionId);
-                    if (session.PaymentStatus.ToLower() == "paid")
-                    {
-                        _unitOfWork.OrderHeader.UpdateStripePaymentId(Id, session.Id, session.PaymentIntentId);
-                        _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusApproved, SD.StatusApproved);
-                        viewModel.OrderNumber = Id;
-                        viewModel.PaymentMethod = "Stripe";
-                        viewModel.TotalAmount = orderHeader.OrderTotal;
-                        viewModel.IsConfirmed = true;
 
-                        _unitOfWork.Cart.DeleteCart(orderHeader.UserId);
-                        _unitOfWork.Save();
-                        return View(viewModel);
-                    }
-                    else
-                    {
-                        _unitOfWork.OrderHeader.Remove(orderHeader);
-                        _unitOfWork.Save();
-                        viewModel.OrderNumber = Id;
-                        viewModel.IsConfirmed = false;
-                        viewModel.PaymentMethod = "Stripe";
-                        return View(viewModel);
-                    }
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(x => x.Id == Id);
+
+            if (orderHeader == null || orderHeader.UserId != userId)
+            {
+                return Unauthorized();
+            }
+
+            ConfirmationPageViewModel viewModel = new ConfirmationPageViewModel
+            {
+                PyamentDate = DateTime.Now,
+                OrderNumber = Id,
+                PaymentMethod = "Stripe",
+                IsConfirmed = false
+            };
+
+            try
+            {
+                var service = new SessionService();
+                Session session = service.Get(orderHeader.SessionId);
+
+                if (session?.PaymentStatus?.ToLower() == "paid")
+                {
+                    _unitOfWork.OrderHeader.UpdateStripePaymentId(Id, session.Id, session.PaymentIntentId);
+                    _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusApproved, SD.StatusApproved);
+
+                    viewModel.IsConfirmed = true;
+                    viewModel.TotalAmount = orderHeader.OrderTotal;
+
+                    _unitOfWork.Cart.DeleteCart(orderHeader.UserId);
+                    _unitOfWork.Save();
                 }
                 else
                 {
-                    return Unauthorized();
+                    _unitOfWork.OrderHeader.Remove(orderHeader);
+                    _unitOfWork.Save();
                 }
             }
-            viewModel.OrderNumber = Id;
-            viewModel.IsConfirmed = false;
+            catch (StripeException ex)
+            {
+                TempData["Error"] = "There was an issue retrieving payment information. Please try again.";
+                return RedirectToAction("ErrorPage");
+            }
+
             return View(viewModel);
         }
 
