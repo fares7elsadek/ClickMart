@@ -44,7 +44,10 @@ namespace ClickMart.DataAccess.Data.config
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
+            builder.HasOne(x => x.ShippingMethod)
+                .WithMany(x => x.users)
+                .HasForeignKey(x => x.shippingMethodId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
 	}
 }

@@ -29,13 +29,22 @@ namespace ClickMart.Areas.Admin.Controllers
             var Users = _unitOfWork.Users.GetAll().ToList();
             var totalCustomers = Users.Count();
             var user = await _userManager.GetUserAsync(User);
+            var orders = _unitOfWork.OrderHeader.GetAll(IncludeProperties:"User").ToList();
+            decimal totalPrice = 0;
+            foreach(var order in orders)
+            {
+                totalPrice += order.OrderTotal;
+            }
+            List<OrderHeader> orderHeaders = orders.OrderByDescending(x => x.PaymentDate).Take(10).ToList();
             AdminDashboardViewModel adminDashboard = new AdminDashboardViewModel
             {
                 Products = products,
                 Categories = Categories,
                 Users = Users,
                 TotalCustomers = totalCustomers,
-                User = user
+                User = user,
+                TotalPrice = totalPrice,
+                OrderHeaders = orderHeaders
             };
             
             return View(adminDashboard);

@@ -48,7 +48,17 @@ namespace ClickMart.Areas.Customer.Controllers
             var (totalPrice, totalPriceAfterDiscount) = CalculateOrderTotals(carts);
 
             var shippingMethods = _unitOfWork.ShippingMethod.GetAll().ToList();
-            var shippingMethod = shippingMethods.FirstOrDefault(x => x.Default);
+
+            var user = _unitOfWork.Users.GetOrDefalut(x => x.Id == userId);
+            ShippingMethod shippingMethod;
+            if (string.IsNullOrEmpty(user.shippingMethodId))
+            {
+                shippingMethod = shippingMethods.FirstOrDefault(x => x.Default);
+            }
+            else
+            {
+                shippingMethod = shippingMethods.FirstOrDefault(x => x.Id==user.shippingMethodId);
+            }
 
             if (shippingMethod == null)
             {
@@ -119,7 +129,16 @@ namespace ClickMart.Areas.Customer.Controllers
             var (totalPrice, totalPriceAfterDiscount) = CalculateOrderTotals(carts);
 
             var shippingMethods = _unitOfWork.ShippingMethod.GetAll().ToList();
-            var shippingMethod = shippingMethods.FirstOrDefault(x => x.Default);
+            var user = _unitOfWork.Users.GetOrDefalut(x => x.Id == userId);
+            ShippingMethod shippingMethod;
+            if (string.IsNullOrEmpty(user.shippingMethodId))
+            {
+                shippingMethod = shippingMethods.FirstOrDefault(x => x.Default);
+            }
+            else
+            {
+                shippingMethod = shippingMethods.FirstOrDefault(x => x.Id == user.shippingMethodId);
+            }
 
             if (shippingMethod == null)
             {
@@ -236,12 +255,16 @@ namespace ClickMart.Areas.Customer.Controllers
         public IActionResult ChangeShippingMethod(string Id, string? Coupon)
         {
 
-            var currentDefaultShippingMethod = _unitOfWork.ShippingMethod.GetOrDefalut(x => x.Default);
-
-
-            if (currentDefaultShippingMethod != null)
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
             {
-                currentDefaultShippingMethod.Default = false;
+                return Unauthorized();
+            }
+
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
             }
 
 
@@ -249,7 +272,11 @@ namespace ClickMart.Areas.Customer.Controllers
 
             if (newDefaultShippingMethod != null)
             {
-                newDefaultShippingMethod.Default = true;
+                var user = _unitOfWork.Users.GetOrDefalut(x => x.Id == userId);
+                if(user.shippingMethodId != Id)
+                {
+                    user.shippingMethodId = Id;
+                }
             }
 
             _unitOfWork.Save();
@@ -275,6 +302,11 @@ namespace ClickMart.Areas.Customer.Controllers
                     .Select(e => e.ErrorMessage)
                     .ToList();
                 TempData["Error"] = string.Join("; ", errors);
+                if (!string.IsNullOrEmpty(model.CouponId))
+                {
+                    var coupon = _unitOfWork.Coupon.GetOrDefalut(x => x.Id==model.CouponId).code;
+                    return RedirectToAction("IndexCoupon",new {coupon});
+                }
                 return RedirectToAction("Index");
             }
 
@@ -425,6 +457,7 @@ namespace ClickMart.Areas.Customer.Controllers
             return View(viewModel);
         }
 
-
+        #region APICALLS
+        #endregion
     }
 }

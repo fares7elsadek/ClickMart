@@ -12,5 +12,9 @@ namespace ClickMart.ViewModels
         public List<User> Users { get; set; }
 
         public User User { get; set; }
+
+        public decimal TotalPrice { get; set; }
+
+        public List<OrderHeader> OrderHeaders { get; set; }
     }
 }

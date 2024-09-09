@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClickMart.Models.Models
 {
@@ -17,6 +18,10 @@ namespace ClickMart.Models.Models
 		public Company Company { get; set; }
 
 		public List<Cart> Carts { get; set; } = new List<Cart>();
+
+		public string? shippingMethodId { get; set; }
+
+		public ShippingMethod? ShippingMethod { get; set; }
 
 		public List<OrderHeader> OrderHeaders { get; set; } = new List<OrderHeader>();
 	}

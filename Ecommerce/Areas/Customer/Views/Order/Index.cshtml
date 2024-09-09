@@ -39,7 +39,7 @@
                                     <!-- Default checked radio -->
                                     <div class="form-check h-100 border rounded-3">
                                         <div class="p-3">
-                                            <input class="form-check-input shippingMethod" value="@shippingInfo.Id" type="radio" name="ShippingMethod" id="flexRadioDefault1" @(shippingInfo.Default? "checked" : "") />
+                                            <input class="form-check-input shippingMethod" value="@shippingInfo.Id" type="radio" name="ShippingMethod" id="flexRadioDefault1" @(shippingInfo.Id == @Model.Header.ShippingMethodId ? "checked" : "") />
                                             <label class="form-check-label" for="flexRadioDefault1">
                                                 @shippingInfo.Name <br />
                                                 <small class="text-muted">@shippingInfo.Description </small>

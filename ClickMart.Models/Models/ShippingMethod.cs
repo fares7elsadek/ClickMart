@@ -18,5 +18,6 @@ namespace ClickMart.Models.Models
 
         public bool Default { get; set; }
         public List<OrderHeader> OrderHeaders { get; set; }
+        public List<User> users { get; set; }
     }
 }
