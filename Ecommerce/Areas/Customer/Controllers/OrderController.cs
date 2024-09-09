@@ -457,7 +457,6 @@ namespace ClickMart.Areas.Customer.Controllers
             return View(viewModel);
         }
 
-        #region APICALLS
-        #endregion
+        
     }
 }
