@@ -2,8 +2,10 @@ using ClickMart.DataAccess.Data;
 using ClickMart.DataAccess.Repository;
 using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
+using ClickMart.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using System.Text.Json.Serialization;
 
 namespace ClickMart
@@ -23,8 +25,7 @@ namespace ClickMart
 				options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
 			});
 
-   
-
+			builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 			builder.Services.AddRazorPages();
 
 
@@ -57,7 +58,7 @@ namespace ClickMart
 
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
-
+			StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 			app.UseRouting();
 
 			app.UseAuthorization();

@@ -5,7 +5,9 @@ using ClickMart.ViewModels.Carts;
 using ClickMart.ViewModels.Order;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using NuGet.Protocol;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace ClickMart.Areas.Customer.Controllers
@@ -44,7 +46,8 @@ namespace ClickMart.Areas.Customer.Controllers
             var totalPriceAfterAddingShippingCost = totalPriceAfterDiscount + shippingMethod.Price;
             orderHeader.OrderTotal = totalPriceAfterAddingShippingCost;
             orderHeader.ShippingMethodId = shippingMethod.Id;
-            orderHeader.AddressId = _unitOfWork.Address.GetOrDefalut(a => a.IsDefault).Id;
+            orderHeader.AddressId = _unitOfWork.Address.GetOrDefalut(a => a.IsDefault &&
+            a.UserId == userId).Id;
             var DiscountAmount = totalPrice - totalPriceAfterDiscount;
             OrderViewModel viewModel = new OrderViewModel();
             viewModel.ShippingCost = shippingMethod.Price;
@@ -79,7 +82,8 @@ namespace ClickMart.Areas.Customer.Controllers
             var shippingMethod = shippingMethods.Where(x => x.Default).FirstOrDefault();
             var totalPriceAfterAddingShippingCost = totalPriceAfterDiscount + shippingMethod.Price;
             orderHeader.ShippingMethodId = shippingMethod.Id;
-            orderHeader.AddressId = _unitOfWork.Address.GetOrDefalut(a => a.IsDefault).Id;
+            orderHeader.AddressId = _unitOfWork.Address.GetOrDefalut(a => a.IsDefault &&
+            a.UserId == userId).Id;
             var DiscountAmount = totalPrice - totalPriceAfterDiscount;
             OrderViewModel viewModel = new OrderViewModel();
             viewModel.ShippingCost = shippingMethod.Price;
@@ -88,7 +92,7 @@ namespace ClickMart.Areas.Customer.Controllers
             viewModel.Carts = carts;
             viewModel.ShippingMethods = shippingMethods;
             viewModel.Header = orderHeader;
-            var Address = _unitOfWork.Address.GetAll(IncludeProperties: "Country").ToList();
+            var Address = _unitOfWork.Address.GetAllWithCondition(x => x.UserId == userId, IncludeProperties: "Country").ToList();
             viewModel.AddressList = Address;
       
             decimal couponDiscount = 0;
@@ -96,7 +100,7 @@ namespace ClickMart.Areas.Customer.Controllers
             var products = _unitOfWork.Product.GetAll(IncludeProperties: "Coupons").ToList();
             if (!string.IsNullOrEmpty(coupon))
             {
-                isCouponValid = ValidateCoupon(coupon, carts, products, ref couponDiscount);
+                isCouponValid = ValidateCoupon(coupon, products, ref couponDiscount);
             }
             decimal totalAfterCoupons = 0;
             decimal CouponDiscountAmount = 0;
@@ -120,9 +124,13 @@ namespace ClickMart.Areas.Customer.Controllers
         }
 
 
-        private bool ValidateCoupon(string coupon, List<Cart> carts, List<Product> products, ref decimal couponDiscount)
+        private bool ValidateCoupon(string coupon, List<Product> products, ref decimal couponDiscount)
         {
             bool valid = false;
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId,
+                IncludeProperties: "Product");
             foreach (var cart in carts)
             {
                 var productWithCoupons = products.FirstOrDefault(x => x.Id == cart.Product.Id);
@@ -134,6 +142,8 @@ namespace ClickMart.Areas.Customer.Controllers
                        
                         couponDiscount += (cart.Quantity * cart.Product.DiscountPrice)
                                           * (1 - couponObj.discountValue / 100);
+                        cart.TotalPriceAfterCoupon = (cart.Quantity * cart.Product.DiscountPrice)
+                            - (cart.Quantity * cart.Product.DiscountPrice) * (couponObj.discountValue / 100);
                         valid = true;
                     }
                     else
@@ -144,6 +154,7 @@ namespace ClickMart.Areas.Customer.Controllers
             }
             if (valid)
             {
+                _unitOfWork.Save();
                 return true;
             }
             else
@@ -156,8 +167,11 @@ namespace ClickMart.Areas.Customer.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ChangeAddressStatus(string Id, string? Coupon)
         {
-            
-            var currentDefaultAddress = _unitOfWork.Address.GetOrDefalut(x => x.IsDefault);
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var currentDefaultAddress = _unitOfWork.Address.GetOrDefalut(x => x.IsDefault
+            && x.UserId == userId);
 
             
             if (currentDefaultAddress != null)
@@ -166,7 +180,8 @@ namespace ClickMart.Areas.Customer.Controllers
             }
 
            
-            var newDefaultAddress = _unitOfWork.Address.GetOrDefalut(x => x.Id == Id);
+            var newDefaultAddress = _unitOfWork.Address.GetOrDefalut(x => x.Id == Id&&
+            x.UserId == userId);
 
             if (newDefaultAddress != null)
             {
@@ -226,13 +241,14 @@ namespace ClickMart.Areas.Customer.Controllers
         {
             if (ModelState.IsValid)
             {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var orderHeader = model;
-                orderHeader.OrderStatus = SD.StatusPending;
                 Random random = new Random();
                 int sixDigitNumber = random.Next(100000, 1000000);
                 orderHeader.TrackingNumber = sixDigitNumber.ToString();
 
-                var carts = _unitOfWork.Cart.GetAll(IncludeProperties: "Product").ToList();
+                var carts = _unitOfWork.Cart.GetAllWithCondition(x => x.UserId == userId,IncludeProperties: "Product").ToList();
                 if(carts.Count > 0)
                 {
                     foreach (var cart in carts)
@@ -243,10 +259,61 @@ namespace ClickMart.Areas.Customer.Controllers
                         details.Price = cart.Product.Price;
                         orderHeader.OrderDetails.Add(details);
                     }
+                    var orderHeaderId = Guid.NewGuid().ToString();
+                    orderHeader.Id = orderHeaderId;
                     _unitOfWork.OrderHeader.Add(orderHeader);
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeaderId, SD.StatusPending, SD.StatusPending);
                     _unitOfWork.Save();
-                    _unitOfWork.Cart.DeleteCart();
-                    return View();
+                    string domain = "http://localhost:5052/";
+                    var options = new Stripe.Checkout.SessionCreateOptions
+                    {
+                        SuccessUrl = domain+ $"Customer/Order/OrderConfirmationPage/{orderHeaderId}",
+                        CancelUrl = domain+ "Customer/Cart",
+                        LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
+                        Mode = "payment",
+                    };
+
+                    foreach(var item in carts)
+                    {
+                        var sessionLineItem = new SessionLineItemOptions
+                        {
+                            PriceData = new SessionLineItemPriceDataOptions
+                            {
+                                UnitAmount = (long)(item.TotalPriceAfterCoupon!=null ?
+                                item.TotalPriceAfterCoupon*100:item.Product.DiscountPrice*100),
+                                Currency="usd",
+                                ProductData = new SessionLineItemPriceDataProductDataOptions()
+                                {
+                                    Name = item.Product.Title
+                                }
+                            },
+                            Quantity = item.Quantity
+                        };
+                        options.LineItems.Add(sessionLineItem);
+                    }
+                    var shipping = _unitOfWork.ShippingMethod.GetOrDefalut(x => x.Id
+                    == orderHeader.ShippingMethodId);
+
+                    options.LineItems.Add(new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(shipping.Price*100),
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions()
+                            {
+                                Name = shipping.Name
+                            }
+                        },
+                        Quantity = 1
+                    });
+                    var service = new Stripe.Checkout.SessionService();
+                    Session session=service.Create(options);
+                    _unitOfWork.OrderHeader.UpdateStripePaymentId(orderHeaderId,session.Id,session.PaymentIntentId);
+                    _unitOfWork.Save();
+
+                    Response.Headers.Add("Location", session.Url);
+                    return new StatusCodeResult(303);
                 }
                 else
                 {
@@ -255,8 +322,54 @@ namespace ClickMart.Areas.Customer.Controllers
                 }
                 
             }
-            Console.WriteLine("error here");
             return RedirectToAction("Index");
+        }
+
+        public IActionResult OrderConfirmationPage(string Id)
+        {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(x => x.Id == Id
+            , IncludeProperties: "User");
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ConfirmationPageViewModel viewModel = new ConfirmationPageViewModel();
+            viewModel.PyamentDate = DateTime.Now;
+            if (orderHeader != null)
+            {
+                if(orderHeader.UserId == userId)
+                {
+                    var service = new SessionService();
+                    Session session = service.Get(orderHeader.SessionId);
+                    if (session.PaymentStatus.ToLower() == "paid")
+                    {
+                        _unitOfWork.OrderHeader.UpdateStripePaymentId(Id, session.Id, session.PaymentIntentId);
+                        _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusApproved, SD.StatusApproved);
+                        viewModel.OrderNumber = Id;
+                        viewModel.PaymentMethod = "Stripe";
+                        viewModel.TotalAmount = orderHeader.OrderTotal;
+                        viewModel.IsConfirmed = true;
+
+                        _unitOfWork.Cart.DeleteCart(orderHeader.UserId);
+                        _unitOfWork.Save();
+                        return View(viewModel);
+                    }
+                    else
+                    {
+                        _unitOfWork.OrderHeader.Remove(orderHeader);
+                        _unitOfWork.Save();
+                        viewModel.OrderNumber = Id;
+                        viewModel.IsConfirmed = false;
+                        viewModel.PaymentMethod = "Stripe";
+                        return View(viewModel);
+                    }
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            viewModel.OrderNumber = Id;
+            viewModel.IsConfirmed = false;
+            return View(viewModel);
         }
 
 

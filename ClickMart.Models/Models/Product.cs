@@ -28,7 +28,6 @@ namespace ClickMart.Models.Models
 
         [Range(0, int.MaxValue)]
         public int Quantity { get; set; }
-
         public string ShortDescription { get; set; }
         public bool Published { get; set; }
 

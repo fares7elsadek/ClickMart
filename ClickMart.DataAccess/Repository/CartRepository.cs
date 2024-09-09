@@ -18,9 +18,10 @@ namespace ClickMart.DataAccess.Repository
             this._db = db;
         }
 
-        public void DeleteCart()
+        public void DeleteCart(string userId)
         {
-            _db.Database.ExecuteSqlRaw("DELETE FROM CARTS");
+            var carts = _db.Carts.Where(x => x.UserId ==  userId).ToList();
+            _db.Carts.RemoveRange(carts);
         }
         public void Update(Cart cart)
         {

@@ -22,5 +22,6 @@ namespace ClickMart.Models.Models
         public int Quantity { get; set; }
 
         public decimal? CouponDiscount { get; set; }
+        public decimal? TotalPriceAfterCoupon { get; set; }
     }
 }

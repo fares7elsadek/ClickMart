@@ -1,0 +1,85 @@
+﻿@model ConfirmationPageViewModel
+@{
+    ViewData["Title"] = "OrderConfirmationPage";
+}
+@if (Model.IsConfirmed)
+{
+    <div class="container mt-5">
+        <!-- Order Confirmation Header -->
+        <div class="text-center">
+            <h1 class="display-4 text-success">Order Confirmed Successfully!</h1>
+            <p class="lead">Thank you for your purchase. Your order has been successfully placed.</p>
+        </div>
+
+        <!-- Order Details Card -->
+        <div class="card mx-auto my-4" style="max-width: 600px;">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Order Details</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Order Number:</strong> #@Model.OrderNumber</li>
+                    <li><strong>Date:</strong> @Model.PyamentDate</li>
+                    <li><strong>Total Amount:</strong> @Model.TotalAmount</li>
+                    <li><strong>Payment Method:</strong> @Model.PaymentMethod</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="alert alert-success text-center" role="alert">
+            <h4 class="alert-heading">Thank you for shopping with us!</h4>
+            <p>Your order will be processed and shipped to your provided address soon. You will receive an email confirmation with tracking details shortly.</p>
+            <hr>
+            <p class="mb-0">If you have any questions, feel free to <a href="#" class="alert-link">contact our support team</a>.</p>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="text-center">
+            <a href="/" class="btn btn-primary btn-lg mt-3">Back to Home</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-5">
+        <!-- Payment Failed Header -->
+        <div class="text-center">
+            <h1 class="display-4 text-danger">Payment Failed</h1>
+            <p class="lead">Unfortunately, we couldn't process your payment. Please try again or contact support.</p>
+        </div>
+
+        <!-- Error Details Card -->
+        <div class="card mx-auto my-4" style="max-width: 600px;">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Payment Details</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Order Number:</strong> #@Model.OrderNumber</li>
+                    <li><strong>Date:</strong> @Model.PyamentDate</li>
+                    <li><strong>Payment Method:</strong> @Model.PaymentMethod</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Retry or Contact Section -->
+        <div class="alert alert-danger text-center" role="alert">
+            <h4 class="alert-heading">Oops! Something went wrong.</h4>
+            <p>We were unable to complete your payment. Please check your payment details and try again.</p>
+            <hr>
+            <p class="mb-0">If the problem persists, <a href="#" class="alert-link">contact our support team</a> for assistance.</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <a href="/retry-payment" class="btn btn-danger btn-lg mt-3">Retry Payment</a>
+            <a href="/contact-support" class="btn btn-secondary btn-lg mt-3">Contact Support</a>
+        </div>
+    </div>
+}
+
+
+
+ <partial name="_FooterPrimaryColorPartial" />
+

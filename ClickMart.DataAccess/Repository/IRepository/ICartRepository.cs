@@ -10,6 +10,6 @@ namespace ClickMart.DataAccess.Repository.IRepository
     public interface ICartRepository: IRepository<Cart>
     {
         void Update(Cart cart);
-        void DeleteCart();
+        void DeleteCart(string userId);
     }
 }
