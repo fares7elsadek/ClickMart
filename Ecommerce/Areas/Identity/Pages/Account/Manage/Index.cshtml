@@ -1,16 +1,21 @@
 ﻿@page
 @model IndexModel
 @using ClickMart.DataAccess.Repository.IRepository
+@using ClickMart.Utility
 @inject UserManager<User> UserManager
+@inject IUnitOfWork unitOfWork
 
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
-
+    var orders = unitOfWork.OrderHeader.GetAllWithCondition(
+        o => o.UserId == Model.Id && o.OrderStatus != SD.StatusCancelled,
+        IncludeProperties: "OrderDetails.Product,Address.Country,ShippingMethod"
+    ).OrderByDescending(o => o.OrderDate).Take(3).ToList();
 }
 
-
 <partial name="_StatusMessage" for="StatusMessage" />
+
 <div class="card p-4 mb-0 shadow-0 border">
     <div class="content-body">
         <div class="d-flex align-items-center">
@@ -18,19 +23,19 @@
                 <img src="@(string.IsNullOrEmpty(Model.avatar) ? "/Images/User/Default/avatar.webp" : "/" + Model.avatar )" class="rounded-circle" style="height: 60px; width: 60px;" />
             </div>
             <div class="pt-2">
-                
                 <h6 class="pt-2">Mr. @Model.FirstName @Model.LastName</h6>
                 <p>
                     Email: @Model.Email, Phone: @Model.PhoneNumber
-                    <button type="button" class="px-2" data-bs-toggle="modal" data-bs-target="#UserDataModal"><i class="fa fa-pen"></i></button>
+                    <button type="button" class="px-2" data-bs-toggle="modal" data-bs-target="#UserDataModal">
+                        <i class="fa fa-pen"></i>
+                    </button>
                 </p>
             </div>
         </div>
 
         <hr />
 
-       
-
+        <!-- Addresses Section -->
         <div class="row g-2 mb-3">
             @foreach (var address in ViewBag.Addresses)
             {
@@ -43,165 +48,104 @@
             }
         </div>
 
-      
-
-        <a href="/Customer/address/add" class="btn btn-light border"> <i class="me-2 fa fa-plus"></i> Add new address </a> 
+        <a href="/Customer/address/add" class="btn btn-light border">
+            <i class="me-2 fa fa-plus"></i> Add new address
+        </a>
 
         <hr class="my-4" />
 
-        <h5 class="mb-3">Your orders</h5>
-        <div class="card border border-primary mb-4 shadow-0">
-            <div class="card-body pb-0">
-                <header class="d-lg-flex">
-                    <div class="flex-grow-1">
-                        <h6 class="mb-0">
-                            Order ID: 8924 <i class="dot"></i>
-                            <span class="text-success"> Shipped</span>
-                        </h6>
-                        <span class="text-muted">Date: 16 December 2022</span>
-                    </div>
-                    <div>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Cancel order</a>
-                        <a href="#" class="btn btn-sm btn-primary shadow-0">Track order</a>
-                    </div>
-                </header>
-                <hr />
-                <div class="row">
-                    <div class="col-lg-4">
-                        <p class="mb-0 text-muted">Contact</p>
-                        <p class="m-0">
-                            Mike Johnatan <br />
-                            Phone: 371-295-9131 <br />
-                            Email: info@mywebsite.com
-                        </p>
-                    </div>
-                    <div class="col-lg-4 border-start">
-                        <p class="mb-0 text-muted">Shipping address</p>
-                        <p class="m-0">
-                            United States <br />
-                            3601 Old Capitol Trail, Unit A-7, Suite 170777, Wilmington, DE 19808
-                        </p>
-                    </div>
-                    <div class="col-lg-4 border-start">
-                        <p class="mb-0 text-muted">Payment</p>
-                        <p class="m-0">
-                            <span class="text-success"> Visa **** 4216 </span> <br />
-                            Shipping fee: $56 <br />
-                            Total paid: $456
-                        </p>
+        <!-- Orders Section -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Your orders</h5>
+            <a href="/Customer/Orders" class="btn btn-sm btn-outline-primary">Show All</a>
+        </div>
+
+        @if (orders.Count > 0)
+        {
+            @foreach (var order in orders)
+            {
+                <div class="card border border-primary mb-4 shadow-0">
+                    <div class="card-body pb-0">
+                        <header class="d-lg-flex">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">
+                                    Order ID: @order.Id <i class="dot"></i>
+                                    <span class="text-success">@order.OrderStatus</span>
+                                </h6>
+                                <span class="text-muted">Date: @order.OrderDate</span>
+                            </div>
+                            <div>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Cancel order</a>
+                                <a href="#" class="btn btn-sm btn-primary shadow-0">Track order</a>
+                            </div>
+                        </header>
+                        <hr />
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <p class="mb-0 text-muted">Contact</p>
+                                <p class="m-0">
+                                    @Model.FirstName @Model.LastName <br />
+                                    @(string.IsNullOrEmpty(Model.PhoneNumber) ? "" : "Phone:" + Model.PhoneNumber) <br />
+                                    Email: @Model.Email
+                                </p>
+                            </div>
+                            <div class="col-lg-4 border-start">
+                                <p class="mb-0 text-muted">Shipping address</p>
+                                <p class="m-0">
+                                    @order.Address.Country.Name <br />
+                                    @order.Address.Region, @order.Address.City ,@order.Address.StreetNumber, @order.Address.AddressLine1, @order.Address.UnitNumber
+                                </p>
+                            </div>
+                            <div class="col-lg-4 border-start">
+                                <p class="mb-0 text-muted">Payment</p>
+                                <p class="m-0">
+                                    <span class="text-success">Stripe</span> <br />
+                                    Shipping fee: @order.ShippingMethod.Price.ToString("C") <br />
+                                    Total paid: @order.OrderTotal.ToString("C")
+                                </p>
+                            </div>
+                        </div>
+                        <hr />
+                        <ul class="row list-unstyled">
+                            @foreach (var product in order.OrderDetails)
+                            {
+                                <li class="col-xl-4 col-lg-6">
+                                    <div class="d-flex mb-3 mb-xl-0">
+                                        <div class="me-3">
+                                            <img width="72" height="72" src="/@product.Product.ImageUrl" class="img-sm rounded border" />
+                                        </div>
+                                        <div class="">
+                                            <p class="mb-0">@product.Product.Title</p>
+                                            <strong>@(product.qty + "x") = @product.Product.Price.ToString("C")</strong>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
                     </div>
                 </div>
-                <hr />
-                <ul class="row list-unstyled">
-                    <li class="col-xl-4 col-lg-6">
-                        <div class="d-flex mb-3 mb-xl-0">
-                            <div class="me-3">
-                                <img width="72" height="72" src="https://mdbootstrap.com/img/bootstrap-ecommerce/items/10.webp" class="img-sm rounded border" />
-                            </div>
-                            <div class="">
-                                <p class="mb-0">T-shirts with multiple colors</p>
-                                <strong> 2x = $25.98 </strong>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="col-xl-4 col-lg-6">
-                        <div class="d-flex mb-3 mb-xl-0">
-                            <div class="me-3">
-                                <img width="72" height="72" src="https://mdbootstrap.com/img/bootstrap-ecommerce/items/7.webp" class="img-sm rounded border" />
-                            </div>
-                            <div class="">
-                                <p class="mb-0">Gaming Headset 32db Black</p>
-                                <strong> 2x = $339.90 </strong>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="col-xl-4 col-lg-6">
-                        <div class="d-flex mb-3 mb-md-0">
-                            <div class="me-3">
-                                <img width="72" height="72" src="https://mdbootstrap.com/img/bootstrap-ecommerce/items/5.webp" class="img-sm rounded border" />
-                            </div>
-                            <div class="">
-                                <p class="mb-0">Apple Watch Series 4 Space Gray</p>
-                                <strong> 2x = $339.90 </strong>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="card border border-primary shadow-0">
-            <div class="card-body pb-0">
-                <header class="d-lg-flex">
-                    <div class="flex-grow-1">
-                        <h6 class="mb-0">
-                            Order ID: 9088
-                            <i class="dot"></i>
-                            <span class="text-danger"> Pending </span>
-                        </h6>
-                        <span class="text-muted">Date: 16 December 2022</span>
-                    </div>
-                    <div>
-                        <a href="#" class="btn btn-sm btn-outline-danger">Cancel order</a>
-                        <a href="#" class="btn btn-sm btn-primary shadow-0">Track order</a>
-                    </div>
-                </header>
-                <hr />
-                <div class="row">
-                    <div class="col-lg-4">
-                        <p class="mb-0 text-muted">Contact</p>
-                        <p class="m-0">
-                            Mike Johnatan <br />
-                            Phone: 371-295-9131 <br />
-                            Email: info@mywebsite.com
-                        </p>
-                    </div>
-                    <div class="col-lg-4 border-start">
-                        <p class="mb-0 text-muted">Shipping address</p>
-                        <p class="m-0">
-                            United States <br />
-                            600 Markley Street, Suite 170777 Port Reading, NJ 07064
-                        </p>
-                    </div>
-                    <div class="col-lg-4 border-start">
-                        <p class="mb-0 text-muted">Payment</p>
-                        <p class="m-0">
-                            <span class="text-success"> Visa **** 4216 </span> <br />
-                            Shipping fee: $56 <br />
-                            Total paid: $456
-                        </p>
-                    </div>
+            }
+        }
+        else
+        {
+            <!-- No Orders Card -->
+            <div class="card text-center border-light shadow-sm p-5">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">
+                        <i class="fa fa-box-open fa-2x mb-3"></i><br />
+                        You don't have any orders yet
+                    </h5>
+                    <p class="card-text">Explore our collection and place your first order today.</p>
+                    <a href="/" class="btn btn-primary">
+                        <i class="me-2 fa fa-shopping-cart"></i> Shop Now
+                    </a>
                 </div>
-                <hr />
-                <ul class="row list-unstyled">
-                    <li class="col-xl-4 col-lg-6">
-                        <div class="d-flex mb-3 mb-lg-0">
-                            <div class="me-3 mb-xl-0">
-                                <img width="72" height="72" src="https://mdbootstrap.com/img/bootstrap-ecommerce/items/10.webp" class="img-sm rounded border" />
-                            </div>
-                            <div class="info">
-                                <p class="mb-0">T-shirts with multiple colors</p>
-                                <strong> 2x = $25.98 </strong>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="col-xl-4 col-lg-6">
-                        <div class="d-flex mb-0 mb-md-0">
-                            <div class="me-3">
-                                <img width="72" height="72" src="https://mdbootstrap.com/img/bootstrap-ecommerce/items/7.webp" class="img-sm rounded border" />
-                            </div>
-                            <div class="info">
-                                <p class="mb-0">Gaming Headset 32db Black</p>
-                                <strong> 2x = $339.90 </strong>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
             </div>
-        </div>
+        }
     </div>
 </div>
 
-
+<!-- Profile Update Modal -->
 <div class="modal fade" id="UserDataModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -247,5 +191,6 @@
         </div>
     </div>
 </div>
+
 
 

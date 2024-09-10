@@ -56,7 +56,7 @@
     <div class="bg-light text-center rounded p-4">
         <div class="d-flex align-items-center justify-content-between mb-4">
             <h6 class="mb-0">Recent Salse</h6>
-            <a href="">Show All</a>
+            <a asp-action="Index" asp-controller="Order">Show All</a>
         </div>
         <div class="table-responsive">
             <table class="table text-start align-middle table-bordered table-hover mb-0">
@@ -76,8 +76,8 @@
                             <td>@order.PaymentDate.ToString()</td>
                             <td> <img src="/@order.User.avatar" class="me-1 rounded-circle" style="height:40px;width:40px;"></img>@order.User.FirstName @order.User.LastName</td>
                             <td>@order.OrderTotal.ToString("C")</td>
-                            <td>@order.PaymentStatus</td>
-                            <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
+                            <td>@order.OrderStatus</td>
+                            <td><a class="btn btn-sm btn-primary" asp-action="Details" asp-controller="Order" asp-route-Id="@order.Id">Detail</a></td>
                         </tr>
                     }
                 </tbody>

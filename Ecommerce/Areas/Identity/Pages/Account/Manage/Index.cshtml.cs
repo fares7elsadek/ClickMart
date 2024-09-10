@@ -53,6 +53,8 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
 
         public string avatar {  get; set; }
 
+        public string Id { get; set; }
+
         public List<string> Addresses { get; set; }
 
        
@@ -110,6 +112,7 @@ namespace ClickMart.Areas.Identity.Pages.Account.Manage
             PhoneNumber = userData.PhoneNumber;
             Email = userData.Email;
             avatar = userData.avatar;
+            Id = userData.Id;
 
             var userAddresses = _unitOfWork.Users.GetUserWithAddresses(u => u.Id == userData.Id)
                 .Addresses;

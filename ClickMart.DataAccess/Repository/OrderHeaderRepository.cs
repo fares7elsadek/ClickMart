@@ -18,6 +18,17 @@ namespace ClickMart.DataAccess.Repository
            this._db.OrderHeaders.Update(orderHeader);
         }
 
+        public void UpdateShippingInformation(string Id, string Carrier, string TrakingNumber)
+        {
+            var orderHeader = _db.OrderHeaders.FirstOrDefault(x => x.Id == Id);
+            if (orderHeader != null)
+            {
+                orderHeader.Carrier = Carrier;
+                orderHeader.TrackingNumber = TrakingNumber;
+            }
+            
+        }
+
         public void UpdateStatus(string Id, string OrderStatus, string? PaymentStatus = null)
         {
             var orderHeader = _db.OrderHeaders.FirstOrDefault(x => x.Id == Id);
@@ -30,7 +41,7 @@ namespace ClickMart.DataAccess.Repository
                 }
             }
         }
-
+        
         public void UpdateStripePaymentId(string Id, string sessionId, string paymentIntentId)
         {
             var orderHeader = _db.OrderHeaders.FirstOrDefault(x => x.Id == Id);

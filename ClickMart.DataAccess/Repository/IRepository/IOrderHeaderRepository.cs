@@ -14,6 +14,8 @@ namespace ClickMart.DataAccess.Repository.IRepository
         void UpdateStatus(string Id, string OrderStatus, string? PaymentStatus = null);
 
         void UpdateStripePaymentId(string Id, string sessionId, string paymentIntentId);
+
+        void UpdateShippingInformation(string Id, string Carrier, string TrakingNumber);
         
     }
 }

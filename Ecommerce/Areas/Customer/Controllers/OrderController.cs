@@ -19,9 +19,11 @@ namespace ClickMart.Areas.Customer.Controllers
     public class OrderController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public OrderController(IUnitOfWork unitOfWork)
+        private readonly IConfiguration _configuration;
+        public OrderController(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
+            _configuration = configuration;
         }
         [HttpGet]
         public IActionResult Index()
@@ -350,7 +352,8 @@ namespace ClickMart.Areas.Customer.Controllers
                     _unitOfWork.Save();
 
                     
-                    string domain = "http://localhost:5052/";
+                    string domain = _configuration["Stripe:RedirectDomain"];
+
                     var options = new Stripe.Checkout.SessionCreateOptions
                     {
                         SuccessUrl = domain + $"Customer/Order/OrderConfirmationPage/{orderHeaderId}",

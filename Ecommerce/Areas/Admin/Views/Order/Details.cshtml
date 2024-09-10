@@ -1,0 +1,187 @@
+﻿@model OrderHeader
+
+@{
+    ViewData["Title"] = "Order Details";
+    string nexOrderStatus="";
+    bool OrderStatusButton = true;
+    switch (Model.OrderStatus)
+    {
+        case SD.StatusApproved:
+            nexOrderStatus = SD.StatusInProcess;
+            break;
+        case SD.StatusInProcess:
+            nexOrderStatus = SD.StatusShipped;
+            break;
+        case SD.StatusShipped:
+            nexOrderStatus = SD.StatusDelevered;
+            break;
+        case SD.StatusDelevered:
+            OrderStatusButton = false;
+            break;
+        default:
+            OrderStatusButton = false;
+            break;
+    }
+}
+
+<div class="container-fluid my-4">
+    <h2 class="display-6 text-center text-primary">
+        <i class="bi bi-receipt"></i> Order Details
+    </h2>
+    <div class="card shadow-lg p-4 border-0 rounded-4">
+        <!-- Order Status Label -->
+        <div class="mb-2">
+            <h6 class="text-uppercase fw-bold">
+                <span class="badge bg-@(Model.OrderStatus == SD.StatusDelevered ? "success" :
+                                        Model.OrderStatus == SD.StatusCancelled ? "danger" :
+                                      Model.OrderStatus == SD.StatusApproved ? "success" :
+                                      Model.OrderStatus == SD.StatusShipped ? "primary" :
+                                      Model.OrderStatus == SD.StatusInProcess ? "warning" :
+                                      Model.OrderStatus == SD.StatusPending ? "secondary" : "danger") p-3">
+
+                    @Model.OrderStatus
+                </span>
+            </h6>
+        </div>
+        <div class="row">
+            <!-- Customer Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm rounded-3 p-3">
+                    <h5 class="mb-3 text-success">
+                        <img src="/@Model.User.avatar" class="me-1 rounded-circle" style="height:40px;width:40px;" /> Customer Information
+                    </h5>
+                    <p><strong>Name:</strong>@Model.User.FirstName @Model.User.LastName</p>
+                    <p><strong>Email:</strong> @Model.User?.Email</p>
+                    <p><strong>Country:</strong> @Model.Address?.Country.Name</p>
+                    <p><strong>City:</strong> @Model.Address?.City</p>
+                    <p><strong>Region:</strong> @Model.Address?.Region</p>
+                    <p><strong>Street number:</strong> @Model.Address?.StreetNumber</p>
+                    <p><strong>Unit number:</strong> @Model.Address?.UnitNumber</p>
+                </div>
+            </div>
+
+            <!-- Order Information -->
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm rounded-3 p-3">
+                    <h5 class="mb-3 text-info">
+                        <i class="bi bi-info-circle"></i> Order Information
+                    </h5>
+                    <p><strong>Order ID:</strong> @Model.Id</p>
+                    <p><strong>Order Date:</strong> @Model.OrderDate?.ToString("MMMM dd, yyyy")</p>
+                    <p><strong>Total:</strong> $@Model.OrderTotal.ToString("F2")</p>
+                    <p>
+                        <strong>Payment Status:</strong>
+                        <span class="badge bg-@(Model.PaymentStatus == "Approved" ? "success" : "warning")">
+                            <i class="bi bi-credit-card"></i> @Model.PaymentStatus
+                        </span>
+                    </p>
+
+                    <!-- Update Status Button -->
+                    @if (OrderStatusButton)
+                    {
+                        <form asp-action="ChageOrderStatus" method="post" class="mt-3">
+                            <input name="Status" value="@nexOrderStatus" hidden/>
+                            <input name="Id" value="@Model.Id" hidden/>
+                            <button type="submit" class="btn btn-primary mt-3">
+                                <i class="bi bi-check-circle"></i> Update to @nexOrderStatus
+                            </button>
+                        </form>
+                    }
+                    
+                </div>
+            </div>
+        </div>
+
+        
+
+        <hr />
+
+        <!-- Order Items -->
+        <h5 class="mb-3 text-primary">
+            <i class="bi bi-bag-check"></i> Order Items
+        </h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover shadow-sm">
+                <thead class="table-info">
+                    <tr>
+                        <th>Product</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-end">Price</th>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderDetails)
+                    {
+                        <tr>
+                            <td>@item.Product.Title</td>
+                            <td class="text-center">@item.qty</td>
+                            <td class="text-end">$@item.Price.ToString("F2")</td>
+                            <td class="text-end">@((item.Price * item.qty).ToString("C"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <hr />
+
+        <!-- Shipping Information -->
+        <h5 class="mb-3 text-warning">
+            <i class="bi bi-truck"></i> Shipping Information
+        </h5>
+        <form asp-action="UpdateShippingInfo" method="post" class="mb-4">
+            <div class="row g-3">
+                <input name="Id" value="@Model.Id" hidden />
+                <div class="col-md-6">
+                    <label for="Carrier" class="form-label">
+                        <i class="bi bi-box-seam"></i> Carrier
+                    </label>
+                    <input type="text" class="form-control border-0 shadow-sm" id="Carrier" name="Carrier" value="@Model.Carrier" />
+                </div>
+                <div class="col-md-6">
+                    <label for="TrackingNumber" class="form-label">
+                        <i class="bi bi-barcode"></i> Tracking Number
+                    </label>
+                    <input type="text" class="form-control border-0 shadow-sm" id="TrackingNumber" name="TrackingNumber" value="@Model.TrackingNumber" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-md btn-primary mt-3 shadow-lg">
+                <i class="bi bi-check-circle"></i> Update Shipping Info 
+            </button>
+        </form>
+
+        <!-- Order Status -->
+        <form asp-action="ChageOrderStatus" method="post" class="mb-4">
+            <div class="mt-3">
+                <label for="OrderStatus" class="form-label">
+                    <i class="bi bi-exclamation-circle"></i> Order Status
+                </label>
+                <input name="Id" value="@Model.Id" hidden />
+                <select name="Status" class="form-select border-0 shadow-sm" id="OrderStatus">
+                    <option value="@SD.StatusPending">Pending</option>
+                    <option value="@SD.StatusInProcess">In Process</option>
+                    <option value="@SD.StatusShipped">Shipped</option>
+                    <option value="@SD.StatusDelevered">Delivered</option>
+                    <option value="@SD.StatusApproved">Approved</option>
+                    <option value="@SD.StatusCancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-md btn-primary mt-3 shadow-lg">
+                <i class="bi bi-check-circle"></i> Update Order Status
+            </button>
+        </form>
+       
+    </div>
+</div>
+
+
+
+@section Navbar {
+    <partial name="_NavbarPartial" model="@ViewBag.User" />
+}
+
+@section Sidebar {
+    <partial name="_SidbarPartial" model="@ViewBag.User" />
+}

@@ -1,25 +1,43 @@
-﻿
-@{
-    ViewData["Title"] = "Manage orders";
+﻿@{
+    ViewData["Title"] = "Manage Orders";
+    var status = Context.Request.Query["status"].ToString().ToLower();
 }
 
 @Html.AntiForgeryToken()
 <div class="container">
     <div class="content m-auto mt-5" style="width: 100%;">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Products</h2>
-            <a class="btn btn-primary rounded-pill d-flex align-items-center" href="@Url.Action("Upsert")">
-                <i class="bi bi-plus-circle me-2"></i> Create New Product
-            </a>
+        <!-- Status Filter Bar -->
+        <div class="mb-4">
+            <ul class="nav nav-pills justify-content-center" id="orderStatusFilter">
+                <li class="nav-item">
+                    <a class="nav-link @( (status == "all") || (string.IsNullOrEmpty(status)) ? "active" : "")" asp-action="Index" asp-controller="Order" asp-route-status="All" data-status="all">All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(status == "pending" ? "active" : "")" asp-action="Index" asp-controller="Order" asp-route-status="Pending" data-status="Pending">Pending</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(status == "processing" ? "active" : "")" asp-action="Index" asp-controller="Order" asp-route-status="Processing" data-status="Processing">Processing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(status == "shipped" ? "active" : "")" asp-action="Index" asp-controller="Order" asp-route-status="Shipped" data-status="Shipped">Shipped</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(status == "delivered" ? "active" : "")" asp-action="Index" asp-controller="Order" asp-route-status="Delivered" data-status="Delivered">Delivered</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(status == "cancelled" ? "active" : "")" asp-action="Index" asp-controller="Order" asp-route-status="Cancelled" data-status="Cancelled">Cancelled</a>
+                </li>
+            </ul>
         </div>
+
         <div class="table-responsive">
-            <table id="datatable" class="table table-hover align-middle text-center" style="width:100%">
+            <table id="OrderDataTable" class="table table-hover align-middle text-center" style="width:100%">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col">Product Title</th>
-                        <th scope="col">Product Price</th>
-                        <th scope="col">Product Category</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Total</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
