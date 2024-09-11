@@ -511,6 +511,7 @@ namespace ClickMart.Areas.Customer.Controllers
             }
             TempData["pages"] = pages;
             var result = orders.Skip((page - 1) * size).Take(size).ToList();
+            HttpContext.Session.Clear();
             return View(result);
         }
 

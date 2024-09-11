@@ -24,7 +24,13 @@ namespace ClickMart
 			{
 				options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
 			});
-
+			builder.Services.AddDistributedMemoryCache();
+			builder.Services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(100);
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
 			builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 			builder.Services.AddRazorPages();
 
@@ -62,7 +68,7 @@ namespace ClickMart
 			app.UseRouting();
 
 			app.UseAuthorization();
-
+			app.UseSession();
 			app.MapRazorPages();
             app.MapControllerRoute(
                 name: "default",

@@ -1,6 +1,7 @@
 ﻿using ClickMart.DataAccess.Repository;
 using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
+using ClickMart.Utility;
 using ClickMart.ViewModels.Carts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -104,6 +105,8 @@ namespace ClickMart.Areas.Customer.Controllers
 				_unitOfWork.Cart.Remove(cart);
 				_unitOfWork.Save();
                 TempData["Success"] = "Done";
+                HttpContext.Session.SetInt32(SD.CartCounter,
+                    _unitOfWork.Cart.GetAllWithCondition(o => o.UserId == userId).ToList().Count);
             }
 			return RedirectToAction("Index");
 		}

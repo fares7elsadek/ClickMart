@@ -1,5 +1,6 @@
 ﻿using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
+using ClickMart.Utility;
 using ClickMart.ViewModels.product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -113,6 +114,8 @@ namespace ClickMart.Areas.Customer.Controllers
                 _unitOfWork.Cart.Add(cart);
             }
             _unitOfWork.Save();
+            HttpContext.Session.SetInt32(SD.CartCounter,
+                    _unitOfWork.Cart.GetAllWithCondition(o => o.UserId == userId).ToList().Count);
             return Json(new { success = true, message = "Product Added to the cart successfully" });
         }
         [HttpGet]

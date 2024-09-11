@@ -18,5 +18,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\ClickMart.Models\ClickMart.Models.csproj" />
+	  <ProjectReference Include="..\ClickMart.Utility\ClickMart.Utility.csproj" />
 	</ItemGroup>
 </Project>
