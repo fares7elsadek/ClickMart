@@ -5,7 +5,7 @@
 }
 
 
-@section headingSection{
+@section headingSection {
     <!-- Heading -->
     <div class="bg-primary">
         <div class="container py-4">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="d-flex justify-content-center mb-3">
                     @* <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Model.ImageUrl" class="item-thumb">
-                        <img width="60" height="60" class="rounded-2" src="@Model.ImageUrl" />
+                    <img width="60" height="60" class="rounded-2" src="@Model.ImageUrl" />
                     </a> *@
                 </div>
                 <!-- thumbs-wrap.// -->
@@ -73,7 +73,7 @@
                     </p>
 
                     <div class="row">
-                        @foreach(var Attribute in Model.product.Attributes)
+                        @foreach (var Attribute in Model.product.Attributes)
                         {
                             <dt class="col-3">@Attribute.AttributeName:</dt>
                             <dd class="col-9">@Attribute.AttributeValue</dd>
@@ -82,14 +82,14 @@
 
                     <hr />
 
-                    <div class="row mb-4">        
+                    <div class="row mb-4">
                         <div class="col-md-4 col-6 mb-3">
                             <label class="mb-2 d-block">Quantity</label>
                             <div class="input-group mb-3" style="width: 170px;">
                                 <button class="btn btn-white border border-secondary px-3" type="button" id="button-minus" data-mdb-ripple-color="dark">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <input type="text" id="quantityInput" name="Quantity" class="form-control text-center border border-secondary" value="1"  aria-label="Quantity" aria-describedby="button-minus button-plus" />
+                                <input type="text" id="quantityInput" name="Quantity" class="form-control text-center border border-secondary" value="1" aria-label="Quantity" aria-describedby="button-minus button-plus" />
                                 <button class="btn btn-white border border-secondary px-3" type="button" id="button-plus" data-mdb-ripple-color="dark">
                                     <i class="fas fa-plus"></i>
                                 </button>
@@ -128,56 +128,56 @@
             <div class="col-lg-8 mb-4">
                 <div class="border rounded-2 px-3 py-2 bg-white">
                     <!-- Pills navs -->
-                   @*  <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
-                        <li class="nav-item d-flex" role="presentation">
-                            <a class="nav-link d-flex align-items-center justify-content-center w-100 active" id="ex1-tab-1" data-mdb-toggle="pill" href="#ex1-pills-1" role="tab" aria-controls="ex1-pills-1" aria-selected="true">Specification</a>
-                        </li>
-                        <li class="nav-item d-flex" role="presentation">
-                            <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-2" data-mdb-toggle="pill" href="#ex1-pills-2" role="tab" aria-controls="ex1-pills-2" aria-selected="false">Warranty info</a>
-                        </li>
-                        <li class="nav-item d-flex" role="presentation">
-                            <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-3" data-mdb-toggle="pill" href="#ex1-pills-3" role="tab" aria-controls="ex1-pills-3" aria-selected="false">Shipping info</a>
-                        </li>
-                        <li class="nav-item d-flex" role="presentation">
-                            <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-4" data-mdb-toggle="pill" href="#ex1-pills-4" role="tab" aria-controls="ex1-pills-4" aria-selected="false">Seller profile</a>
-                        </li>
+                    @*  <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+                    <li class="nav-item d-flex" role="presentation">
+                    <a class="nav-link d-flex align-items-center justify-content-center w-100 active" id="ex1-tab-1" data-mdb-toggle="pill" href="#ex1-pills-1" role="tab" aria-controls="ex1-pills-1" aria-selected="true">Specification</a>
+                    </li>
+                    <li class="nav-item d-flex" role="presentation">
+                    <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-2" data-mdb-toggle="pill" href="#ex1-pills-2" role="tab" aria-controls="ex1-pills-2" aria-selected="false">Warranty info</a>
+                    </li>
+                    <li class="nav-item d-flex" role="presentation">
+                    <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-3" data-mdb-toggle="pill" href="#ex1-pills-3" role="tab" aria-controls="ex1-pills-3" aria-selected="false">Shipping info</a>
+                    </li>
+                    <li class="nav-item d-flex" role="presentation">
+                    <a class="nav-link d-flex align-items-center justify-content-center w-100" id="ex1-tab-4" data-mdb-toggle="pill" href="#ex1-pills-4" role="tab" aria-controls="ex1-pills-4" aria-selected="false">Seller profile</a>
+                    </li>
                     </ul> *@
                     <!-- Pills navs -->
                     <!-- Pills content -->
                     <div class="tab-content" id="ex1-content">
                         <div class="tab-pane fade show active" id="ex1-pills-1" role="tabpanel" aria-labelledby="ex1-tab-1">
-                            
+
                             @Html.Raw(Model.product.Description)
                             <table class="table border mt-3 mb-2">
                                 @foreach (var Attribute in Model.product.Attributes)
                                 {
-                                     <tr>
-                                    <th class="py-2">@Attribute.AttributeName:</th>
-                                    <td class="py-2">@Attribute.AttributeValue</td>
+                                    <tr>
+                                        <th class="py-2">@Attribute.AttributeName:</th>
+                                        <td class="py-2">@Attribute.AttributeValue</td>
                                     </tr>
                                 }
-                               
-                                
+
+
                             </table>
                         </div>
                         @* <div class="tab-pane fade mb-2" id="ex1-pills-2" role="tabpanel" aria-labelledby="ex1-tab-2">
-                            Tab content or sample information now <br />
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                            aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                            officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        Tab content or sample information now <br />
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                        officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                        nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
                         </div>
                         <div class="tab-pane fade mb-2" id="ex1-pills-3" role="tabpanel" aria-labelledby="ex1-tab-3">
-                            Another tab content or sample information now <br />
-                            Dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                            commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                            mollit anim id est laborum.
+                        Another tab content or sample information now <br />
+                        Dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                        mollit anim id est laborum.
                         </div>
                         <div class="tab-pane fade mb-2" id="ex1-pills-4" role="tabpanel" aria-labelledby="ex1-tab-4">
-                            Some other tab content or sample information now <br />
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                            aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                            officia deserunt mollit anim id est laborum.
+                        Some other tab content or sample information now <br />
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                        officia deserunt mollit anim id est laborum.
                         </div> *@
                     </div>
                     <!-- Pills content -->
@@ -188,7 +188,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Similar items</h5>
-                            @foreach(var product in Model.SameCategoryProducts)
+                            @foreach (var product in Model.SameCategoryProducts)
                             {
                                 <div class="d-flex mb-3">
                                     <a asp-action="Details" asp-route-Id="@product.Id" class="me-3">
@@ -213,20 +213,18 @@
     <div class="container">
         <div class="row justify-content-start">
             <div class="col-12 col-lg-10 col-xl-8">
-                <div class="card ezy__epreview2-card mb-3 shadow-lg border-0 rounded-4">
+                <div class="card ezy__epreview2-card mb-3">
                     <div class="card-body p-md-4">
-                        <!-- Customer Review Heading -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="fs-3 fw-bold">Customer Reviews</h2>
-                            <button id="newCommentBtn" class="btn btn-outline-primary btn-lg py-1 px-md-4">New Comment</button>
+                        <div class="d-flex justify-content-between">
+                            <h2 class="fs-4">Customer Review</h2>
+                            <div>
+                                <button id="newCommentBtn" class="btn ezy__epreview2-btn-outline py-1 px-md-4">New Comment</button>
+                            </div>
                         </div>
-                        <hr class="my-3" />
-
-                        <!-- Review Form (Initially Hidden) -->
+                        <hr class="ezy__epreview2-hr my-3" />
                         <div id="reviewForm" class="d-none">
                             <form asp-action="Create" asp-controller="Review" asp-area="Customer">
                                 <input type="text" name="ProductId" value="@Model.product.Id" hidden />
-
                                 <div class="mb-3">
                                     <label for="rating" class="form-label">Rating</label>
                                     <select id="rating" name="Stars" class="form-select" required>
@@ -237,77 +235,76 @@
                                         <option value="1">1 - Terrible</option>
                                     </select>
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="Title" class="form-label">Title</label>
                                     <input type="text" id="Title" name="Title" class="form-control" required />
                                 </div>
-
                                 <div class="mb-3">
                                     <label for="Description" class="form-label">Your Review</label>
                                     <textarea id="Description" name="Description" rows="4" class="form-control" required></textarea>
                                 </div>
-
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary btn-lg">Submit Review</button>
+                                    <button type="submit" class="btn btn-primary">Submit Review</button>
                                 </div>
                             </form>
-                            <hr class="my-3" />
+                            <hr class="ezy__epreview2-hr my-3" />
                         </div>
-
-                        <!-- Review Display -->
                         @foreach (var review in Model.reviews)
                         {
-                            <div class="row align-items-center mb-4">
-                                <!-- Profile Picture & User Info -->
-                                <div class="col-lg-3 text-center mb-3">
-                                    <div class="rounded-circle overflow-hidden shadow" style="width: 80px; height: 80px;">
-                                        <img src="/@review.User?.avatar" alt="" class="img-fluid w-100 h-100" />
-                                    </div>
-                                    <h5 class="mt-3">@review.User?.FirstName @review.User?.LastName</h5>
-                                    <p class="text-muted">Reviewed on @(review.CreatedAt?.ToString("MMMM dd, yyyy") ?? "Unknown")</p>
-                                </div>
-
-                                <!-- Review Content -->
-                                <div class="col-lg-9">
-                                    <div class="d-flex justify-content-start align-items-center mb-2">
-                                        <!-- Rating -->
-                                        <div class="text-warning">
-                                            @for (int i = 0; i < review.Stars; i++)
-                                            {
-                                                <i class="fas fa-star"></i>
-                                            }
-                                            <span class="text-muted ms-2">(@review.Stars)</span>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="d-flex mb-4">
+                                        <div class="ezy__epreview2-profile rounded-circle me-2 overflow-hidden">
+                                            <img src="/@review.User?.avatar" alt="" class="img-fluid" />
+                                        </div>
+                                        <div>
+                                            <h5 class="fs-6 mb-1 mt-1">@review.User?.FirstName @review.User?.LastName</h5>
+                                            <p class="ezy__epreview2-content fw-light mb-3">
+                                                <span class="ezy__epreview2-rating">
+                                                    @for (int i = 0; i < review.Stars; i++)
+                                                    {
+                                                        <i class="fas fa-star"></i>
+                                                    }
+                                                </span>
+                                                <span class="mx-1">@review.Stars</span>
+                                            </p>
+                                            <p class="ezy__epreview2-content opacity-50 mb-0">Comment At</p>
+                                            <p class="fw-bold mb-0">@(review.CreatedAt?.ToString("MMMM dd, yyyy") ?? "Date is null")</p>
                                         </div>
                                     </div>
-
-                                    <!-- Review Description -->
-                                    <p class="text-secondary fs-6">
+                                </div>
+                                <div class="col-lg-8">
+                                    <p class="ezy__epreview2-content opacity-75 mb-4">
                                         @review.Description
                                     </p>
-
-                                    <!-- Like/Dislike Actions -->
-                                    <div class="d-flex justify-content-end mt-3">
-                                        <button class="btn btn-outline-success me-3">
-                                            <i class="far fa-thumbs-up"></i> Like (20)
+                                    <div class="d-flex justify-content-end">
+                                        <button class="btn ezy__epreview2-btn-text py-0 d-inline-flex justify-content-center align-items-center text-decoration-none me-4">
+                                            <i class="far fa-thumbs-up fs-6 me-2"></i> Like (20)
                                         </button>
-                                        <button class="btn btn-outline-danger">
-                                            <i class="far fa-thumbs-down"></i> Dislike (6)
+                                        <button class="btn ezy__epreview2-btn-text py-0 d-inline-flex justify-content-center align-items-center text-decoration-none">
+                                            <i class="far fa-thumbs-down fs-6 me-2"></i> Dislike (6)
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <hr class="my-4" />
+                            <hr class="ezy__epreview2-hr my-3" />
                         }
+
+
+
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+    </div>
+    </div>
+    </div>
 </section>
 
-<partial name="_FooterPrimaryColorPartial"/>
-@section Scripts{
+<partial name="_FooterPrimaryColorPartial" />
+@section Scripts {
     <script src="~/js/product/Quantity.js"></script>
     <script>
         document.getElementById('newCommentBtn').addEventListener('click', function () {
@@ -315,7 +312,7 @@
             reviewForm.classList.toggle('d-none');
         });
 
-        function SetQuantityValue(){
+        function SetQuantityValue() {
             let input = document.getElementById("quantityInput").value;
             document.getElementById("AddToCartQuantityInput").value = input;
         }
