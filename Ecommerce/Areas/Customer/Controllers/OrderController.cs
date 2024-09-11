@@ -1,4 +1,5 @@
-﻿using ClickMart.DataAccess.Repository.IRepository;
+﻿using ClickMart.DataAccess.Repository;
+using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
 using ClickMart.Utility;
 using ClickMart.ViewModels.Carts;
@@ -9,7 +10,9 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using NuGet.Protocol;
 using Stripe;
 using Stripe.Checkout;
+using Stripe.Climate;
 using System.Security.Claims;
+using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ClickMart.Areas.Customer.Controllers
@@ -293,6 +296,21 @@ namespace ClickMart.Areas.Customer.Controllers
             }
         }
 
+        private string GenerateInvoiceNumber()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            StringBuilder result = new StringBuilder("#");
+
+            Random random = new Random();
+            for (int i = 0; i < 7; i++) // 7 characters after '#'
+            {
+                result.Append(chars[random.Next(chars.Length)]);
+            }
+
+            return result.ToString();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult OrderConfirmation(OrderHeader model)
@@ -346,7 +364,7 @@ namespace ClickMart.Areas.Customer.Controllers
 
                     var orderHeaderId = Guid.NewGuid().ToString();
                     orderHeader.Id = orderHeaderId;
-
+                    orderHeader.Invoice = GenerateInvoiceNumber();
                     _unitOfWork.OrderHeader.Add(orderHeader);
                     _unitOfWork.OrderHeader.UpdateStatus(orderHeaderId, SD.StatusPending, SD.StatusPending);
                     _unitOfWork.Save();
@@ -460,6 +478,122 @@ namespace ClickMart.Areas.Customer.Controllers
             return View(viewModel);
         }
 
-        
+        [HttpGet]
+        public IActionResult Orders(int page = 1)
+        {
+            if (page <= 0)
+            {
+                page = 1;
+            }
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var orders = _unitOfWork.OrderHeader.GetAllWithCondition(
+                    o => o.UserId == userId && o.OrderStatus != SD.StatusCancelled,
+                    IncludeProperties: "OrderDetails.Product,User,Address.Country,ShippingMethod"
+             ).OrderByDescending(o => o.OrderDate).ToList();
+
+            int total = orders.Count();
+            int size = 2;
+            int pages = (int)Math.Ceiling((decimal)total / size);
+            if (page > pages)
+            {
+                page = pages;
+            }
+            TempData["pages"] = pages;
+            var result = orders.Skip((page - 1) * size).Take(size).ToList();
+            return View(result);
+        }
+
+        [HttpGet]
+        public IActionResult Tracking(string Id)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(o => o.Id==Id
+            && o.OrderStatus!=SD.StatusCancelled,IncludeProperties: "ShippingMethod");
+            if(orderHeader == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            if(orderHeader.UserId !=userId)
+            {
+                return Unauthorized();
+            }
+            int numberOfDays = 0;
+            string shippingMethodName = orderHeader.ShippingMethod.Name;
+            switch (shippingMethodName)
+            {
+                case "Standard Shipping":
+                    numberOfDays = 6; break;
+                case "Express Shipping":
+                    numberOfDays = 3; break;
+                case "Overnight Shipping":
+                    numberOfDays = 1; break;
+            }
+            DateTime orderDate = (DateTime)orderHeader.OrderDate;
+            var ExpectedDate = DateOnly.FromDateTime(orderDate.AddDays(numberOfDays));
+            TempData["ExpectedDate"] = ExpectedDate;
+            return View(orderHeader);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelOrder(string Id)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var order = _unitOfWork.OrderHeader.GetOrDefalut(o => o.Id == Id);
+            if(order == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            if(userId != order.UserId)
+            {
+                return Unauthorized();
+            }
+            if(order.OrderStatus == SD.StatusApproved)
+            {
+                order.OrderStatus = SD.StatusCancelled;
+                _unitOfWork.Save();
+            }
+            else
+            {
+                TempData["Error"] = "You can't cancele the order at this phase";
+            }
+
+           
+            return LocalRedirect("/Identity/Account/Manage");
+        }
+
     }
 }

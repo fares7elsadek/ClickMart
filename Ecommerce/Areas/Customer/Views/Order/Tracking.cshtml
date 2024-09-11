@@ -1,0 +1,79 @@
+﻿@model OrderHeader
+@{
+    ViewData["Title"] = "Tracking";
+
+    // Define the possible order states
+    bool isApproved = Model.OrderStatus == SD.StatusApproved;
+    bool isProcessing = Model.OrderStatus == SD.StatusInProcess;
+    bool isShipped = Model.OrderStatus == SD.StatusShipped;
+    bool isArrived = Model.OrderStatus == SD.StatusDelevered;
+}
+
+@section CssFiles {
+    <link rel="stylesheet" href="~/css/TrackingOrder.css" />
+}
+
+<section class="vh-100" style="background-color: #8c9eff;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12">
+                <div class="card card-stepper" style="border-radius: 16px;">
+
+                    <div class="card-body p-5">
+
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <div>
+                                <h5 class="mb-0">INVOICE <span class="text-primary font-weight-bold">@Model.Invoice</span></h5>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0">Expected Arrival <span>@TempData["ExpectedDate"]</span></p>
+                            </div>
+                        </div>
+
+                        <ul id="progressbar-2" class="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2">
+                            <li class="step0 @(isApproved || isProcessing || isShipped || isArrived ? "active" : "text-muted") text-center" id="step1"></li>
+                            <li class="step0 @(isProcessing || isShipped || isArrived ? "active" : "text-muted") text-center" id="step2"></li>
+                            <li class="step0 @(isShipped || isArrived ? "active" : "text-muted") text-center" id="step3"></li>
+                            <li class="step0 @(isArrived ? "active" : "text-muted") text-center" id="step4"></li>
+                        </ul>
+
+                        <div class="d-flex justify-content-between">
+                            <div class="d-lg-flex align-items-center">
+                                <i class="fas fa-check-circle fa-3x me-lg-4 mb-3 mb-lg-0"></i>
+                                <div>
+                                    <p class="fw-bold mb-1">Order</p>
+                                    <p class="fw-bold mb-0">Approved</p>
+                                </div>
+                            </div>
+                            <div class="d-lg-flex align-items-center">
+                                <i class="fas fa-tasks fa-3x me-lg-4 mb-3 mb-lg-0"></i>
+                                <div>
+                                    <p class="fw-bold mb-1">Order</p>
+                                    <p class="fw-bold mb-0">Processing</p>
+                                </div>
+                            </div>
+                            <div class="d-lg-flex align-items-center">
+                                <i class="fas fa-box-open fa-3x me-lg-4 mb-3 mb-lg-0"></i>
+                                <div>
+                                    <p class="fw-bold mb-1">Order</p>
+                                    <p class="fw-bold mb-0">Shipped</p>
+                                </div>
+                            </div>
+                            <div class="d-lg-flex align-items-center">
+                                <i class="fas fa-home fa-3x me-lg-4 mb-3 mb-lg-0"></i>
+                                <div>
+                                    <p class="fw-bold mb-1">Order</p>
+                                    <p class="fw-bold mb-0">Arrived</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<partial name="_FooterPartial" />
