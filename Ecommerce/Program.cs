@@ -1,4 +1,5 @@
 using ClickMart.DataAccess.Data;
+using ClickMart.DataAccess.DbInitializer;
 using ClickMart.DataAccess.Repository;
 using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
@@ -41,6 +42,7 @@ namespace ClickMart
 				.AddDefaultTokenProviders();
 
 			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
             builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -69,12 +71,23 @@ namespace ClickMart
 
 			app.UseAuthorization();
 			app.UseSession();
+			SeedDatabase();
 			app.MapRazorPages();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
-		}
+
+            void SeedDatabase()
+            {
+				using (var scope = app.Services.CreateScope())
+				{
+					var dbIntializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+					dbIntializer.Initialize();
+				}
+			}
+        }
+		
 	}
 }

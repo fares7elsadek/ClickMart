@@ -51,40 +51,41 @@ namespace ClickMart.Areas.Admin.Controllers
             }
             else
             {
-                Product product = _unitOfWork.Product.GetOrDefalut(x => x.Id == Id);
+                Product product = _unitOfWork.Product.GetOrDefalut(x => x.Id == Id
+                , IncludeProperties: "Galleries");
                 return View(product);
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(string? Id,Product product,IFormFile? ImageFile)
+        public IActionResult Upsert(string? Id,Product product,string imageUrls)
         {
             if (ModelState.IsValid)
             {
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
-                if (ImageFile != null)
+                
+                if (imageUrls != null)
                 {
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
-                    string productPath = Path.Combine(wwwRootPath, @"Images\Products");
-                    if (!Directory.Exists(productPath))
+                    string[] images = imageUrls.Split(',');
+                    int counter = 1;
+                    foreach(string image in images)
                     {
-                        Directory.CreateDirectory(productPath);
-                    }
-                    var existingProduct = product;
-                    if (existingProduct != null && existingProduct.ImageUrl != null)
-                    {
-                        var oldImagePath = Path.Combine(wwwRootPath, existingProduct.ImageUrl);
-                        if (System.IO.File.Exists(oldImagePath))
+                        Galleries gallery = new Galleries();
+                        gallery.ImagePath = image;
+                        gallery.displayOrder = counter;
+                        if (counter == 1)
                         {
-                            System.IO.File.Delete(oldImagePath);
+                            gallery.thumbnail = true;
                         }
+                        else
+                        {
+                            gallery.thumbnail = false;
+                        }
+                        product.Galleries.Add(gallery);
+                        counter++;
                     }
-                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
-                    {
-                        ImageFile.CopyTo(fileStream);
-                    }
-                    product.ImageUrl = @"Images\Products\" + fileName;
+                    product.ImageUrl = "fares";
+
                 }
                 if (Id == null)
                 {
@@ -119,17 +120,22 @@ namespace ClickMart.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(string Id)
         {
-            Product product = _unitOfWork.Product.GetOrDefalut(x => x.Id == Id);
+            Product product = _unitOfWork.Product.GetOrDefalut(x => x.Id == Id,
+                IncludeProperties: "Galleries");
             if (product != null)
             {
-                if (product.ImageUrl != null)
+                if (product.Galleries.Count > 0)
                 {
                     string wwwRootPath = _webHostEnvironment.WebRootPath;
-                    var oldImagePath = Path.Combine(wwwRootPath, product.ImageUrl);
-                    if (System.IO.File.Exists(oldImagePath))
+                    foreach(var gallery in product.Galleries)
                     {
-                        System.IO.File.Delete(oldImagePath);
+                        var oldImagePath = Path.Combine(wwwRootPath, gallery.ImagePath);
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
                     }
+                    
                 }
                 _unitOfWork.Product.Remove(product);
                 _unitOfWork.Save();
@@ -141,6 +147,31 @@ namespace ClickMart.Areas.Admin.Controllers
             }
 
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImages(IFormFile file)
+        {
+            if (file != null)
+            {
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, @"Images\Products");
+
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+                return Json(new { filePath = @"Images\Products\"  + uniqueFileName });
+            }
+
+            return BadRequest("File upload failed");
+        }
+
         #endregion
     }
 }

@@ -63,9 +63,11 @@
                             <span class="text-danger" asp-validation-for="CategoryId"></span>
                         </div>
 
+                        <!-- Dropzone for multiple image uploads -->
                         <div class="mb-3">
-                            <label for="ImageFile" class="form-label">Product Image</label>
-                            <input type="file" name="ImageFile" class="form-control" />
+                            <label for="ImageFile" class="form-label">Product Images</label>
+                            <div id="imageDropzone" class="dropzone dz-clickable"></div>
+                            <input type="hidden" name="ImageUrls" id="imageUrls" />
                         </div>
 
                         <div class="form-check mb-4">
@@ -94,7 +96,7 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center mb-4">
-                            <img src="~/@Model.ImageUrl" class="img-fluid rounded" alt="@Model.Title" />
+                            <img src="~/@Model.Galleries[1].ImagePath" class="img-fluid rounded" alt="@Model.Title" />
                         </div>
                         <h6 class="mb-2"><strong>Title:</strong> @Model.Title</h6>
                         <p class="mb-2"><strong>Price:</strong> $@Model.Price</p>
@@ -137,8 +139,28 @@
     <script>
         tinymce.init({
             selector: 'textarea',
-            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ycheck spellcheckdialog a11ycheck typography align lineheight checklist numlist bullist indent outdent emoticons charmap removeformat',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker a11ycheck spellcheckdialog align lineheight numlist bullist indent outdent emoticons charmap removeformat',
             toolbar: 'undo redo | bold italic underline strikethrough | link image media table | numlist bullist indent outdent',
+        });
+
+        var imageUrls = [];
+        Dropzone.autoDiscover = false;
+        var myDropzone = new Dropzone("#imageDropzone", {
+            url: "/Admin/Product/UploadImages",
+            paramName: "file",
+            maxFilesize: 5,
+            acceptedFiles: ".jpeg,.jpg,.png,.gif",
+            addRemoveLinks: true,
+            success: function (file, response) {
+                imageUrls.push(response.filePath);
+                document.getElementById('imageUrls').value = imageUrls.join(",");
+            },
+            removedfile: function (file) {
+                var filePath = file.xhr.response;
+                imageUrls = imageUrls.filter(function (url) { return url !== filePath; });
+                document.getElementById('imageUrls').value = imageUrls.join(",");
+                file.previewElement.remove();
+            }
         });
     </script>
     <script src="~/js/Attributes/Datatables.js"></script>
