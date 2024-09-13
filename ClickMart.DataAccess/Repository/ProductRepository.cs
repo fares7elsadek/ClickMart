@@ -30,9 +30,13 @@ namespace ClickMart.DataAccess.Repository
                 newProduct.ShortDescription = product.ShortDescription;
                 newProduct.DiscountPrice = product.DiscountPrice;
                 newProduct.Published = product.Published;
-                if(product.ImageUrl != null)
+                newProduct.Quantity = product.Quantity;
+                if(product.Galleries.Count > 0)
                 {
-                    newProduct.ImageUrl = product.ImageUrl;
+                    foreach(var galary in product.Galleries)
+                    {
+                        newProduct.Galleries.Add(galary);
+                    }
                 }
             }
         }

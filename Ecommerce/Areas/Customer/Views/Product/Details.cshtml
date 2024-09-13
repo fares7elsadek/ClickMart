@@ -31,14 +31,18 @@
         <div class="row gx-5">
             <aside class="col-lg-6">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="~/@Model.product.ImageUrl">
-                        <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="~/@Model.product.ImageUrl" />
+                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image" href="~/@Model.product.Thumbnail">
+                        <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="~/@Model.product.Thumbnail" />
                     </a>
                 </div>
                 <div class="d-flex justify-content-center mb-3">
-                    @* <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="@Model.ImageUrl" class="item-thumb">
-                    <img width="60" height="60" class="rounded-2" src="@Model.ImageUrl" />
-                    </a> *@
+                    @foreach(var photo in Model.product.Galleries)
+                    {
+                        <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="/@photo.ImagePath" class="item-thumb">
+                            <img width="60" height="60" class="rounded-2" src="/@photo.ImagePath" />
+                        </a>
+                    }
+                   
                 </div>
                 <!-- thumbs-wrap.// -->
                 <!-- gallery-wrap .end// -->
@@ -192,7 +196,7 @@
                             {
                                 <div class="d-flex mb-3">
                                     <a asp-action="Details" asp-route-Id="@product.Id" class="me-3">
-                                        <img src="~/@product.ImageUrl" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
+                                        <img src="~/@product.Thumbnail" style="min-width: 96px; height: 96px;" class="img-md img-thumbnail" />
                                     </a>
                                     <div class="info">
                                         <a asp-action="Details" asp-route-Id="@product.Id" class="nav-link mb-1">

@@ -29,9 +29,7 @@ namespace ClickMart.DataAccess.Data.config
                 .HasColumnType("text")
                 .IsRequired();
 
-            builder.Property(x => x.ImageUrl)
-                .HasColumnType("text")
-                .IsRequired();
+            
 
             builder.Property(x => x.Price)
                 .HasColumnType("decimal")

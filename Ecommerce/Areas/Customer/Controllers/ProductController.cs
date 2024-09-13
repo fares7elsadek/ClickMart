@@ -24,10 +24,10 @@ namespace ClickMart.Areas.Customer.Controllers
         [HttpGet]
         public IActionResult Details(string Id)
         {
-            var product = _unitOfWork.Product.GetOrDefalut(p => p.Id == Id, IncludeProperties: "Category,Attributes");
+            var product = _unitOfWork.Product.GetOrDefalut(p => p.Id == Id, IncludeProperties: "Category,Attributes,Galleries");
             List<Product> SameCategoryProducts = _unitOfWork.Product.GetAllWithCondition(p => (p.CategoryId == product.CategoryId && p.Id !=product.Id)).ToList();
             var reviews = _unitOfWork.Reviews.GetAllWithCondition(r => r.ProductId == product.Id,
-                 IncludeProperties:"User").ToList();
+                 IncludeProperties: "User").ToList();
             ProductDeatailsViewModel viewModel = new ProductDeatailsViewModel();
             viewModel.product = product;
             viewModel.SameCategoryProducts = SameCategoryProducts;

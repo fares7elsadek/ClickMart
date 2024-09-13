@@ -16,8 +16,8 @@
                     <input type="hidden" id="productId" value="@Model?.Id" />
                     <div asp-validation-summary="All" class="text-danger mb-3"></div>
                     <form asp-action="Upsert" enctype="multipart/form-data">
-                        <input asp-for="ImageUrl" type="hidden" />
-
+                        
+                        <input asp-for="Thumbnail" hidden />
                         <div class="mb-3">
                             <label asp-for="Title" class="form-label">Product Title</label>
                             <input asp-for="Title" class="form-control" placeholder="Enter product title" required />
@@ -63,6 +63,11 @@
                             <span class="text-danger" asp-validation-for="CategoryId"></span>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="thumbnail" class="form-label">Thumbnail</label>
+                            <input type="file" name="thumbnail"  />
+                        </div>
+
                         <!-- Dropzone for multiple image uploads -->
                         <div class="mb-3">
                             <label for="ImageFile" class="form-label">Product Images</label>
@@ -96,7 +101,7 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center mb-4">
-                            <img src="~/@Model.Galleries[1].ImagePath" class="img-fluid rounded" alt="@Model.Title" />
+                            <img src="~/@Model.Thumbnail" class="img-fluid rounded" alt="@Model.Title" />
                         </div>
                         <h6 class="mb-2"><strong>Title:</strong> @Model.Title</h6>
                         <p class="mb-2"><strong>Price:</strong> $@Model.Price</p>

@@ -34,9 +34,9 @@ namespace ClickMart.Models.Models
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string CategoryId { get; set; }
-
-        public string? ImageUrl { get; set; }
         public Category? Category { get; set; }
+
+        public string? Thumbnail {  get; set; }
         public List<Galleries> Galleries { get; set; } = new List<Galleries>();
         public List<Attributes> Attributes { get; set; } = new List<Attributes>();
         public List<ProductAttributes> ProductAttributes { get; set; } = new List<ProductAttributes>();

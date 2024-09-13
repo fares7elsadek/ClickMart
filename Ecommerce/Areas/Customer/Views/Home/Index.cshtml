@@ -25,7 +25,7 @@
                     <div class="card my-2 shadow-sm border-0 rounded-3 w-100" style="display: flex; flex-direction: column; height: 100%;">
                         <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-Id="@product.Id" class="text-decoration-none text-dark">
                             <div class="card-img-top position-relative" style="height: 250px; overflow: hidden;">
-                                <img src="@product.ImageUrl" class="img-fluid rounded-3 w-100 h-100" style="object-fit: cover;" />
+                                <img src="/@product.Thumbnail" class="img-fluid rounded-3 w-100 h-100" style="object-fit: cover;" />
                                 <div class="badge bg-danger position-absolute top-0 start-0 m-2">New</div>
                             </div>
                         </a>

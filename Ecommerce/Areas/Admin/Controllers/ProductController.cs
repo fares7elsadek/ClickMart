@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 
 
@@ -59,11 +61,31 @@ namespace ClickMart.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(string? Id,Product product,string imageUrls)
+        public async Task<IActionResult> Upsert(string? Id,Product product,string? imageUrls,IFormFile? thumbnail)
         {
             if (ModelState.IsValid)
             {
-                
+                if (thumbnail != null)
+                {
+                    string thumbnailName = Guid.NewGuid().ToString() + "_" + thumbnail.FileName;
+                    var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, @"Images\Products");
+                    if (!Directory.Exists(FilePath))
+                    {
+                        Directory.CreateDirectory(FilePath);
+                    }
+
+                    var filePath = Path.Combine(FilePath, thumbnailName);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        thumbnail.CopyTo(fileStream);
+                    }
+                    Galleries gallary = new Galleries();
+                    gallary.ImagePath = @"Images\Products\" + thumbnailName;
+                    gallary.thumbnail = true;
+                    gallary.displayOrder = 1;
+                    product.Galleries.Add(gallary);
+                    product.Thumbnail = @"Images\Products\" + thumbnailName;
+                }
                 if (imageUrls != null)
                 {
                     string[] images = imageUrls.Split(',');
@@ -73,19 +95,10 @@ namespace ClickMart.Areas.Admin.Controllers
                         Galleries gallery = new Galleries();
                         gallery.ImagePath = image;
                         gallery.displayOrder = counter;
-                        if (counter == 1)
-                        {
-                            gallery.thumbnail = true;
-                        }
-                        else
-                        {
-                            gallery.thumbnail = false;
-                        }
+                        gallery.thumbnail = false;
                         product.Galleries.Add(gallery);
                         counter++;
                     }
-                    product.ImageUrl = "fares";
-
                 }
                 if (Id == null)
                 {
@@ -103,6 +116,7 @@ namespace ClickMart.Areas.Admin.Controllers
                 }
                
             }
+            ViewData["User"] = await _userManager.GetUserAsync(User);
             return View();
         }
 
