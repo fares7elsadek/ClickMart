@@ -191,8 +191,12 @@
                                             </div>
                                             <h6 class="text-success">Free shipping</h6>
                                             <div class="mt-4">
-                                                <button class="btn btn-primary shadow-0" type="button">Buy this</button>
-                                                <a href="#!" class="btn btn-light border px-2 pt-2 icon-hover"><i class="fas fa-heart fa-lg px-1"></i></a>
+                                                <form asp-action="AddToCart" asp-controller="Product">
+                                                    <input type="text" name="ProductId" value="@product.Id" hidden />
+                                                    <input type="text" name="Quantity" value="1" hidden />
+                                                    <input type="text" name="place" value="buy" hidden />
+                                                    <button class="btn btn-primary shadow-0" type="submit">Buy this</button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>

@@ -439,7 +439,7 @@ namespace ClickMart.Areas.Customer.Controllers
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             OrderHeader orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(x => x.Id == Id
-            ,IncludeProperties: "ShippingMethod,Address.Country,OrderDetails.Product,User");
+            , IncludeProperties: "ShippingMethod,Address.Country,OrderDetails.Product,User");
 
             if (orderHeader == null || orderHeader.UserId != userId)
             {
@@ -456,13 +456,18 @@ namespace ClickMart.Areas.Customer.Controllers
 
             try
             {
+                if (string.IsNullOrEmpty(orderHeader.SessionId))
+                {
+                    TempData["Error"] = "Invalid session information.";
+                    return RedirectToAction("ErrorPage");
+                }
+
                 var service = new SessionService();
                 Session session = service.Get(orderHeader.SessionId);
 
-                if (session?.PaymentStatus?.ToLower() == "paid")
+                if (session?.PaymentStatus != null && session.PaymentStatus.ToLower() == "paid")
                 {
-                    
-                    if(orderHeader.OrderStatus == SD.StatusPending)
+                    if (orderHeader.OrderStatus == SD.StatusPending)
                     {
                         _unitOfWork.OrderHeader.UpdateStripePaymentId(Id, session.Id, session.PaymentIntentId);
                         _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusApproved, SD.PaymentStatusApproved);
@@ -477,25 +482,31 @@ namespace ClickMart.Areas.Customer.Controllers
                         var orderDetails = orderHeader.OrderDetails;
                         _unitOfWork.Cart.DeleteCart(orderHeader.UserId);
                         _unitOfWork.Save();
+
                         await _emailSender.SendEmailAsync(orderHeader.User.Email, "Order Confirmation",
-                            EmailTemplates.OrderConfirmation(orderHeader.User,orderDetails, shipping, totalAmountInDollars, address));
+                            EmailTemplates.OrderConfirmation(orderHeader.User, orderDetails, shipping, totalAmountInDollars, address));
                     }
-                    
                 }
                 else
                 {
-                    _unitOfWork.OrderHeader.Remove(orderHeader);
+                    _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusCancelled, SD.PaymentStatusRejected);
                     _unitOfWork.Save();
                 }
             }
             catch (StripeException ex)
             {
                 TempData["Error"] = "There was an issue retrieving payment information. Please try again.";
-                return RedirectToAction("ErrorPage");
+                return RedirectToAction("Error","Home");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "An unexpected error occurred. Please try again.";
+                return RedirectToAction("Error", "Home");
             }
 
             return View(viewModel);
         }
+
 
         [HttpGet]
         public IActionResult Orders(int page = 1)

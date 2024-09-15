@@ -133,6 +133,10 @@ namespace ClickMart.Areas.Customer.Controllers
             _unitOfWork.Save();
             HttpContext.Session.SetInt32(SD.CartCounter,
                     _unitOfWork.Cart.GetAllWithCondition(o => o.UserId == userId).ToList().Count);
+            if(place!=null && place== "buy")
+            {
+                return RedirectToAction("Index", "Order");
+            }
             return Json(new { success = true, message = "Product Added to the cart successfully" });
         }
         [HttpGet]

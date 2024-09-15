@@ -84,15 +84,15 @@ namespace ClickMart
 
             app.Run();
 
-            void SeedDatabase()
-            {
+			void SeedDatabase()
+			{
 				using (var scope = app.Services.CreateScope())
 				{
 					var dbIntializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
 					dbIntializer.Initialize();
 				}
 			}
-        }
+		}
 		
 	}
 }

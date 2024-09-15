@@ -19,7 +19,7 @@ namespace ClickMart.Areas.Customer.Controllers
         public IActionResult Index()
         {
             var Products = _unitOfWork.Product.GetAll().OrderByDescending(p => p.CreatedAt)
-                .Take(10).ToList();
+                .OrderByDescending(p => p.CreatedAt).Take(8).ToList();
             var Categories = _unitOfWork.Category.GetAll().ToList();
             HomeViewModel homeViewModel = new HomeViewModel();
             homeViewModel.Products = Products;

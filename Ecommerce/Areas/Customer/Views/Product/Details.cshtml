@@ -106,17 +106,12 @@
                     <input type="hidden" id="AddToCartProductIdInput" value="@Model.product.Id">
 
                     <!-- Form for Buy Now -->
-                    <form method="post" action="/your-buy-now-endpoint" class="d-inline">
-                        <input type="hidden" name="Quantity" value="1" id="buyNowQuantityInput">
+                    <form asp-action="AddToCart" asp-controller="Product" class="d-inline">
+                        <input type="text" name="ProductId" value="@Model.product.Id" hidden />
+                        <input type="text" name="Quantity" value="1" hidden />
+                        <input type="text" name="place" value="buy" hidden />
                         <button type="submit" class="btn btn-warning shadow-0">
                             Buy now
-                        </button>
-                    </form>
-
-                    <!-- Form for Save -->
-                    <form method="post" action="/your-save-endpoint" class="d-inline">
-                        <button type="submit" class="btn btn-light border border-secondary py-2 icon-hover px-3">
-                            <i class="me-1 fa fa-heart fa-lg"></i> Save
                         </button>
                     </form>
                 </div>
@@ -156,7 +151,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Similar items</h5>
-                            @foreach (var product in Model.SameCategoryProducts)
+                            @foreach (var product in Model.SameCategoryProducts.Take(5))
                             {
                                 <div class="d-flex mb-3">
                                     <a asp-action="Details" asp-route-Id="@product.Id" class="me-3">
@@ -245,14 +240,6 @@
                                     <p class="ezy__epreview2-content opacity-75 mb-4">
                                         @review.Description
                                     </p>
-                                    <div class="d-flex justify-content-end">
-                                        <button class="btn ezy__epreview2-btn-text py-0 d-inline-flex justify-content-center align-items-center text-decoration-none me-4">
-                                            <i class="far fa-thumbs-up fs-6 me-2"></i> Like (20)
-                                        </button>
-                                        <button class="btn ezy__epreview2-btn-text py-0 d-inline-flex justify-content-center align-items-center text-decoration-none">
-                                            <i class="far fa-thumbs-down fs-6 me-2"></i> Dislike (6)
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                             <hr class="ezy__epreview2-hr my-3" />

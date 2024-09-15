@@ -4,6 +4,7 @@ using ClickMart.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using NuGet.Protocol.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,12 +51,12 @@ namespace ClickMart.DataAccess.DbInitializer
                  _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee)).GetAwaiter().GetResult();
                  _roleManager.CreateAsync(new IdentityRole(SD.Role_Company)).GetAwaiter().GetResult();
 
-                string AdminUserName = _configuration["UserName"];
-                string AdminEmail = _configuration["Email"];
-                string AdminFirstName = _configuration["FirstName"];
-                string AdminLastName = _configuration["LastName"];
-                string AdminPassword = _configuration["Password"];
-                string AdminPhoneNumber = _configuration["PhoneNumber"];
+                string AdminUserName = _configuration["AdminInfo:UserName"];
+                string AdminFirstName = _configuration["AdminInfo:FirstName"];
+                string AdminLastName = _configuration["AdminInfo:LastName"];
+                string AdminPhoneNumber = _configuration["AdminInfo:PhoneNumber"];
+                string AdminPassword = _configuration["AdminInfo:Password"];
+                string AdminEmail = _configuration["AdminInfo:Email"];
 
                 _userManager.CreateAsync(new User
                 {
@@ -64,6 +65,8 @@ namespace ClickMart.DataAccess.DbInitializer
                     FirstName= AdminFirstName,
                     LastName= AdminLastName,
                     PhoneNumber= AdminPhoneNumber,
+                    EmailConfirmed = true,
+
                 },AdminPassword).GetAwaiter().GetResult();
 
                 User user = _db.Users.FirstOrDefault( u => u.Email == AdminEmail);
@@ -325,7 +328,8 @@ namespace ClickMart.DataAccess.DbInitializer
                         Id = Guid.NewGuid().ToString(),
                         Name = "Standard Shipping",
                         Price = 5.99M,
-                        Description = "Delivery within 5-7 business days."
+                        Description = "Delivery within 5-7 business days.",
+                        Default = true
                     },
                     new ShippingMethod
                     {
