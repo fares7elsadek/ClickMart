@@ -13,7 +13,7 @@
                     <img class="rounded-circle me-2" style="height:35px;width:35px"
                          src="/@UserManager.GetUserAsync(User).Result?.avatar" alt="profile" />
                 }
-                <span class="d-none d-md-inline">Hello, @UserManager.GetUserName(User)!</span>
+                <span class="d-none d-md-inline">Hello, @UserManager.GetUserAsync(User).Result?.FirstName!</span>
             </a>
         </div>
         <div>
