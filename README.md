@@ -13,6 +13,10 @@
 - **Responsive Design**: Fully responsive UI using Bootstrap.
 - **User Authentication**: Registration, login, and password reset.
 
+## Demo Video
+[![ClickMart Demo](./diagram/thumbnail.png)](https://drive.google.com/file/d/1FuhPFD4ptX8FeBwnR2CgIzihHtRzO7HN/view?usp=sharing)
+
+
 ## Live Demo
 
 Check out the live demo of **ClickMart**:  
