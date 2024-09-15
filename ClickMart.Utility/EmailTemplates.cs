@@ -240,7 +240,7 @@ namespace ClickMart.Utility
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;'>
         <h2 style='text-align: center; color: #4CAF50;'>Order Status Update</h2>
         <p style='font-size: 18px;'>Hi {user.UserName},</p>
-        <p style='font-size: 16px;'>Your order <strong>#{invoice}</strong> status has been updated.</p>
+        <p style='font-size: 16px;'>Your order <strong>{invoice}</strong> status has been updated.</p>
 
         <div style='background-color: #f7f7f7; padding: 15px; border-radius: 5px;'>
             <p><strong>Expected Arrival:</strong> {expectedArrival}</p>
