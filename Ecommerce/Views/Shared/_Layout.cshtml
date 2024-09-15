@@ -73,6 +73,8 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <!--Sweet Alert-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         if (window.location.search && window.location.search!=""){
             const urlParams = new URLSearchParams(window.location.search)
@@ -120,6 +122,7 @@
     </script>
     <!-- fontawesome js file -->
     <script src="~/js/all.min.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
     <partial name="_ValidationScriptsPartial" />
 </body>

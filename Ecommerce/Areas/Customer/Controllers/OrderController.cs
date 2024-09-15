@@ -578,7 +578,7 @@ namespace ClickMart.Areas.Customer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CancelOrder(string Id)
+        public  IActionResult CancelOrder(string Id)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             if (claimsIdentity == null || !claimsIdentity.IsAuthenticated)
@@ -601,18 +601,16 @@ namespace ClickMart.Areas.Customer.Controllers
             {
                 return Unauthorized();
             }
-            if(order.OrderStatus == SD.StatusApproved)
+            if(order.OrderStatus == SD.StatusApproved || order.OrderStatus == SD.StatusPending)
             {
                 order.OrderStatus = SD.StatusCancelled;
                 _unitOfWork.Save();
+                return Json(new { success = true, message = "Order has been cancelled" });
             }
             else
             {
-                TempData["Error"] = "You can't cancele the order at this phase";
+                return Json(new { success = false, message = "You can't cancel the order at this phase" });
             }
-
-           
-            return LocalRedirect("/Identity/Account/Manage");
         }
 
     }
