@@ -5,6 +5,7 @@ using ClickMart.Utility;
 using ClickMart.ViewModels.Carts;
 using ClickMart.ViewModels.Order;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using NuGet.Protocol;
@@ -23,10 +24,14 @@ namespace ClickMart.Areas.Customer.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
-        public OrderController(IUnitOfWork unitOfWork, IConfiguration configuration)
+        private readonly IEmailSender _emailSender;
+        public OrderController(IUnitOfWork unitOfWork
+            , IConfiguration configuration
+            , IEmailSender emailSender)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _emailSender = emailSender;
         }
         [HttpGet]
         public IActionResult Index()
@@ -411,6 +416,7 @@ namespace ClickMart.Areas.Customer.Controllers
                     var service = new Stripe.Checkout.SessionService();
                     var session = service.Create(options);
                     _unitOfWork.OrderHeader.UpdateStripePaymentId(orderHeaderId, session.Id, session.PaymentIntentId);
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeaderId,SD.StatusPending,SD.PaymentStatusPending);
                     _unitOfWork.Save();
 
                     transaction.Commit();
@@ -427,12 +433,13 @@ namespace ClickMart.Areas.Customer.Controllers
             }
         }
 
-        public IActionResult OrderConfirmationPage(string Id)
+        public async Task<IActionResult> OrderConfirmationPage(string Id)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(x => x.Id == Id);
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(x => x.Id == Id
+            ,IncludeProperties: "ShippingMethod,Address.Country,OrderDetails.Product,User");
 
             if (orderHeader == null || orderHeader.UserId != userId)
             {
@@ -454,14 +461,26 @@ namespace ClickMart.Areas.Customer.Controllers
 
                 if (session?.PaymentStatus?.ToLower() == "paid")
                 {
-                    _unitOfWork.OrderHeader.UpdateStripePaymentId(Id, session.Id, session.PaymentIntentId);
-                    _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusApproved, SD.StatusApproved);
+                    
+                    if(orderHeader.OrderStatus == SD.StatusPending)
+                    {
+                        _unitOfWork.OrderHeader.UpdateStripePaymentId(Id, session.Id, session.PaymentIntentId);
+                        _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusApproved, SD.PaymentStatusApproved);
 
-                    viewModel.IsConfirmed = true;
-                    viewModel.TotalAmount = orderHeader.OrderTotal;
+                        viewModel.IsConfirmed = true;
+                        viewModel.TotalAmount = orderHeader.OrderTotal;
 
-                    _unitOfWork.Cart.DeleteCart(orderHeader.UserId);
-                    _unitOfWork.Save();
+                        long totalAmount = session.AmountTotal ?? 0;
+                        decimal totalAmountInDollars = totalAmount / 100M;
+                        var shipping = orderHeader.ShippingMethod;
+                        var address = orderHeader.Address;
+                        var orderDetails = orderHeader.OrderDetails;
+                        _unitOfWork.Cart.DeleteCart(orderHeader.UserId);
+                        _unitOfWork.Save();
+                        await _emailSender.SendEmailAsync(orderHeader.User.Email, "Order Confirmation",
+                            EmailTemplates.OrderConfirmation(orderHeader.User,orderDetails, shipping, totalAmountInDollars, address));
+                    }
+                    
                 }
                 else
                 {

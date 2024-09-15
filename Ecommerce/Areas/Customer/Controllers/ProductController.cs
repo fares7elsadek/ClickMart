@@ -5,7 +5,6 @@ using ClickMart.ViewModels.product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Security.Claims;
 
 namespace ClickMart.Areas.Customer.Controllers
@@ -28,6 +27,22 @@ namespace ClickMart.Areas.Customer.Controllers
             List<Product> SameCategoryProducts = _unitOfWork.Product.GetAllWithCondition(p => (p.CategoryId == product.CategoryId && p.Id !=product.Id)).ToList();
             var reviews = _unitOfWork.Reviews.GetAllWithCondition(r => r.ProductId == product.Id,
                  IncludeProperties: "User").ToList();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                var user = _unitOfWork.Users.GetOrDefalut(u => u.Id == userId,
+                    IncludeProperties:"Products");
+                var IsExist = user.Products.Contains(product);
+                if (!IsExist)
+                {
+                    user.Products.Add(product);
+                    _unitOfWork.Save();
+                }
+            }
+
+            
             ProductDeatailsViewModel viewModel = new ProductDeatailsViewModel();
             viewModel.product = product;
             viewModel.SameCategoryProducts = SameCategoryProducts;
@@ -36,9 +51,9 @@ namespace ClickMart.Areas.Customer.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string? categoryIds, string s = "", int page = 1)
+        public IActionResult Search(string? categoryIds,bool? offer=false, string s = "", int page = 1)
         {
-            if (string.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(s) && string.IsNullOrEmpty(categoryIds) && offer == null)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -50,16 +65,18 @@ namespace ClickMart.Areas.Customer.Controllers
             List<Product> Products;
             List<string> selectedCategories = new List<string>();
 
-            
+
             if (!string.IsNullOrEmpty(categoryIds))
             {
-                
                 var categoryIdList = categoryIds.Split(',').ToList();
                 selectedCategories = categoryIdList;
-
-                
                 Products = _unitOfWork.Product.GetAllWithCondition(p =>
-                    categoryIdList.Contains(p.CategoryId) && p.Title.Contains(s)).ToList();
+                    categoryIdList.Contains(p.CategoryId) && p.Title.Contains(s)
+                    ).ToList();
+            }
+            else if (offer != null)
+            {
+                Products = _unitOfWork.Product.GetAllWithCondition(p => p.OnSale == offer).ToList();
             }
             else
             {

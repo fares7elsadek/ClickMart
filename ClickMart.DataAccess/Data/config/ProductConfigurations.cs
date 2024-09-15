@@ -55,6 +55,11 @@ namespace ClickMart.DataAccess.Data.config
                HasDefaultValue(false)
                .IsRequired();
 
+            builder.Property(x => x.OnSale).
+             HasColumnType("bit").
+             HasDefaultValue(false)
+             .IsRequired();
+
             builder.Property(x => x.CreatedAt)
                 .HasColumnType("date")
                 .HasDefaultValueSql("GETDATE()");

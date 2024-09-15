@@ -24,5 +24,9 @@ namespace ClickMart.Models.Models
 		public ShippingMethod? ShippingMethod { get; set; }
 
 		public List<OrderHeader> OrderHeaders { get; set; } = new List<OrderHeader>();
+
+
+		public List<Product> Products { get; set; } = new List<Product>();
+		public List<ProductViews> ProductViews { get; set; } = new List<ProductViews>();
 	}
 }

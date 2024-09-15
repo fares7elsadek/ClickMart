@@ -48,6 +48,12 @@ namespace ClickMart.DataAccess.Data.config
                 .WithMany(x => x.users)
                 .HasForeignKey(x => x.shippingMethodId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasMany(p => p.Products)
+                .WithMany(u => u.Users)
+                .UsingEntity<ProductViews>();
+               
+
         }
 	}
 }

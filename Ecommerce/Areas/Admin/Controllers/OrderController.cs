@@ -3,6 +3,7 @@ using ClickMart.Models.Models;
 using ClickMart.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClickMart.Areas.Admin.Controllers
@@ -13,11 +14,13 @@ namespace ClickMart.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
+        private readonly IEmailSender _emailSender;
         public OrderController(IUnitOfWork unitOfWork,
-            UserManager<User> userManager) 
+            UserManager<User> userManager,IEmailSender emailSender) 
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
         public async Task<IActionResult> Index()
         {
@@ -35,28 +38,58 @@ namespace ClickMart.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ChageOrderStatus(string Id,string Status)
+        public async Task<IActionResult> ChageOrderStatus(string Id,string Status)
         {
-            switch(Status)
+            var orderHeader = _unitOfWork.OrderHeader.GetOrDefalut(o => o.Id == Id,
+                IncludeProperties: "User,ShippingMethod");
+            int numberOfDays = 0;
+            string shippingMethodName = orderHeader.ShippingMethod.Name;
+            switch (shippingMethodName)
+            {
+                case "Standard Shipping":
+                    numberOfDays = 6; break;
+                case "Express Shipping":
+                    numberOfDays = 3; break;
+                case "Overnight Shipping":
+                    numberOfDays = 1; break;
+            }
+            DateTime orderDate = (DateTime)orderHeader.OrderDate;
+            var ExpectedDate = DateOnly.FromDateTime(orderDate.AddDays(numberOfDays)).ToString();
+            switch (Status)
             {
                 case SD.StatusApproved:
                     _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusApproved);
+                    await _emailSender.SendEmailAsync(orderHeader.User.Email, "Order Status",
+                        EmailTemplates.OrderStatusUpdate(orderHeader.Invoice,
+                        orderHeader.User, SD.StatusApproved, ExpectedDate));
                     TempData["Success"] = "Updated Successfully";
                     break;
                 case SD.StatusInProcess:
                     _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusInProcess);
+                    await _emailSender.SendEmailAsync(orderHeader.User.Email, "Order Status",
+                        EmailTemplates.OrderStatusUpdate(orderHeader.Invoice,
+                        orderHeader.User, SD.StatusInProcess, ExpectedDate));
                     TempData["Success"] = "Updated Successfully";
                     break;
                 case SD.StatusShipped:
                     _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusShipped);
+                    await _emailSender.SendEmailAsync(orderHeader.User.Email, "Order Status",
+                        EmailTemplates.OrderStatusUpdate(orderHeader.Invoice,
+                        orderHeader.User, SD.StatusShipped, ExpectedDate));
                     TempData["Success"] = "Updated Successfully";
                     break;
                 case SD.StatusDelevered:
                     _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusDelevered);
+                    await _emailSender.SendEmailAsync(orderHeader.User.Email, "Order Status",
+                        EmailTemplates.OrderStatusUpdate(orderHeader.Invoice,
+                        orderHeader.User, SD.StatusDelevered, ExpectedDate));
                     TempData["Success"] = "Updated Successfully";
                     break;
                 case SD.StatusCancelled:
                     _unitOfWork.OrderHeader.UpdateStatus(Id, SD.StatusCancelled);
+                    await _emailSender.SendEmailAsync(orderHeader.User.Email, "Order Status",
+                        EmailTemplates.OrderStatusUpdate(orderHeader.Invoice,
+                        orderHeader.User, SD.StatusCancelled, ExpectedDate));
                     TempData["Success"] = "Updated Successfully";
                     break;
                 default :

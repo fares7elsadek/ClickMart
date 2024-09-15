@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using ClickMart.DataAccess.Repository;
 using ClickMart.Models.Models;
 using ClickMart.Utility;
 using Microsoft.AspNetCore.Authentication;
@@ -33,13 +34,16 @@ namespace ClickMart.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+
         public RegisterModel(
             UserManager<User> userManager,
             IUserStore<User> userStore,
             SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager
+
+            )
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -48,6 +52,7 @@ namespace ClickMart.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            
         }
 
         /// <summary>
@@ -135,6 +140,11 @@ namespace ClickMart.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            var existingUser = await _userManager.FindByEmailAsync(Input.Email);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Email", $"The email {Input.Email} is already in use.");
+            }
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -160,7 +170,8 @@ namespace ClickMart.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                                    EmailTemplates.ConfirmationEmail(HtmlEncoder.Default.Encode(callbackUrl)));
+
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -177,8 +188,6 @@ namespace ClickMart.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
-            // If we got this far, something failed, redisplay form
             return Page();
         }
 

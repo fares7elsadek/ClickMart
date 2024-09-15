@@ -80,9 +80,15 @@
                 <span class="d-none d-lg-inline-flex">@Model.FirstName @Model.LastName</span>
             </a>
             <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                <a href="#" class="dropdown-item">My Profile</a>
-                <a href="#" class="dropdown-item">Settings</a>
-                <a href="#" class="dropdown-item">Log Out</a>
+                <a href="/Identity/Account/Manage" class="dropdown-item">My Profile</a>
+                <form id="logoutForm"
+                      asp-area="Identity" asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit"
+                            class="dropdown-item">
+                        <span class="d-none d-md-inline">Logout</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

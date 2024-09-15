@@ -4,6 +4,7 @@ using ClickMart.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClickMart.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240914125232_add-onsaleonproducts")]
+    partial class addonsaleonproducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -534,21 +537,6 @@ namespace ClickMart.DataAccess.Migrations
                     b.ToTable("ProductCoupons", (string)null);
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.ProductViews", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductViews", (string)null);
-                });
-
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
                 {
                     b.Property<string>("Id")
@@ -1005,25 +993,6 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ClickMart.Models.Models.ProductViews", b =>
-                {
-                    b.HasOne("ClickMart.Models.Models.Product", "product")
-                        .WithMany("ProductViews")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClickMart.Models.Models.User", "user")
-                        .WithMany("ProductViews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("product");
-
-                    b.Navigation("user");
-                });
-
             modelBuilder.Entity("ClickMart.Models.Models.Reviews", b =>
                 {
                     b.HasOne("ClickMart.Models.Models.Product", "Product")
@@ -1156,8 +1125,6 @@ namespace ClickMart.DataAccess.Migrations
 
                     b.Navigation("ProductCoupons");
 
-                    b.Navigation("ProductViews");
-
                     b.Navigation("Reviews");
 
                     b.Navigation("carts");
@@ -1177,8 +1144,6 @@ namespace ClickMart.DataAccess.Migrations
                     b.Navigation("Carts");
 
                     b.Navigation("OrderHeaders");
-
-                    b.Navigation("ProductViews");
 
                     b.Navigation("Reviews");
                 });

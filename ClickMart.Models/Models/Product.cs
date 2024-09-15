@@ -36,6 +36,7 @@ namespace ClickMart.Models.Models
         public string CategoryId { get; set; }
         public Category? Category { get; set; }
 
+        public bool OnSale { get; set; }
         public string? Thumbnail {  get; set; }
         public List<Galleries> Galleries { get; set; } = new List<Galleries>();
         public List<Attributes> Attributes { get; set; } = new List<Attributes>();
@@ -49,5 +50,8 @@ namespace ClickMart.Models.Models
 
         public List<Coupons> Coupons { get; set; } = new List<Coupons>();
         public List<ProductCoupons> ProductCoupons { get; set; } = new List<ProductCoupons>();
+
+        public List<ProductViews> ProductViews { get; set; } = new List<ProductViews>();
+        public List<User> Users { get; set; } = new List<User>();
     }
 }

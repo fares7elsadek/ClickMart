@@ -3,8 +3,10 @@ using ClickMart.DataAccess.DbInitializer;
 using ClickMart.DataAccess.Repository;
 using ClickMart.DataAccess.Repository.IRepository;
 using ClickMart.Models.Models;
+using ClickMart.Services;
 using ClickMart.Utility;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using System.Text.Json.Serialization;
@@ -36,12 +38,15 @@ namespace ClickMart
 			builder.Services.AddRazorPages();
 
 
-			builder.Services.AddIdentity<User,IdentityRole>()
+			builder.Services.AddIdentity<User,IdentityRole>(options =>
+			options.SignIn.RequireConfirmedAccount=true)
 				.AddEntityFrameworkStores<AppDbContext>()
 				.AddDefaultUI()
 				.AddDefaultTokenProviders();
 
-			builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
             builder.Services.AddScoped<IDbInitializer, DbInitializer>();
             builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

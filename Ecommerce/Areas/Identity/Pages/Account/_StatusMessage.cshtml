@@ -3,8 +3,41 @@
 @if (!String.IsNullOrEmpty(Model))
 {
     var statusMessageClass = Model.StartsWith("Error") ? "danger" : "success";
-    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        @Model
+    <div class="container" style="max-width: 600px; margin-top: 2rem;">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-center align-items-center mb-3">
+                    @if (statusMessageClass == "success")
+                    {
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 2.5rem;"></i>
+                    }
+                    else
+                    {
+                        <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2.5rem;"></i>
+                    }
+                </div>
+
+                <h5 class="text-center fw-bold mb-4" style="font-size: 1.5rem;">
+                    @if (statusMessageClass == "success")
+                    {
+                        <span class="text-success">Success!</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Error!</span>
+                    }
+                </h5>
+
+                <p class="text-center" style="font-size: 1rem; font-weight: 500;">
+                    @Model
+                </p>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a href="/Identity/Account/Login" class="btn btn-outline-primary rounded-pill" style="font-size: 1rem;">
+                        Login page
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 }

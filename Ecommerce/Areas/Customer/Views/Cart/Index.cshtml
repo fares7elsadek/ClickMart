@@ -12,9 +12,7 @@
                 <h6 class="mb-0">
                     <a asp-action="Index" asp-controller="Home" class="text-white-50">Home</a>
                     <span class="text-white-50 mx-2"> > </span>
-                    <a href="" class="text-white-50">Cart</a>
-                    <span class="text-white-50 mx-2"> > </span>
-                    <a href="" class="text-white"><u>Cart</u></a>
+                    <a href="" class="text-white-50">Shopping cart</a>
                 </h6>
             </nav>
             <!-- Breadcrumb -->
@@ -146,12 +144,6 @@
                 {
                     <div class="col-lg-3 col-md-6 col-sm-6">
                         <div class="card px-4 border shadow-0 mb-4 mb-lg-0 h-100">
-                            <div class="mask px-2" style="height: 50px;">
-                                <div class="d-flex justify-content-between">
-                                    <h6><span class="badge bg-danger pt-1 mt-3 ms-2">New</span></h6>
-                                    <a href="#"><i class="fas fa-heart text-primary fa-lg float-end pt-3 m-2"></i></a>
-                                </div>
-                            </div>
                             <a asp-action="Details" asp-area="Customer" asp-controller="Product" asp-route-Id="@product.Id">
                                 <div class="image-container" style="height: 200px; overflow: hidden;">
                                     <img src="/@product.Thumbnail" class="card-img-top rounded-2" style="object-fit: cover; height: 100%; width: 100%;" />

@@ -1,60 +1,68 @@
-﻿@model List<Product>
+﻿@using ClickMart.ViewModels.Home
+@model HomeViewModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
-@section Jumbotron {
-    <partial name="_JumbotronPartial" />
-}
 @section headingSection {
     <partial name="_CollapseWrapperPartial" />
 }
 
 @Html.AntiForgeryToken()
+<!--  intro  -->
+<section class="mt-3">
+    <div class="container">
+        <main class="card p-3 shadow-2-strong">
+            <div class="row">
+                <div class="col-lg-3">
+                    <nav class="nav flex-column nav-pills mb-md-2">
+                        @foreach(var category in Model.Categories)
+                        {
+                            <a class="nav-link my-0 py-2 ps-3 bg-white" asp-action="Search" asp-controller="Product" asp-route-categoryIds="@category.Id">@category.Name</a>
+                        }
+                    </nav>
+                </div>
+                <div class="col-lg-9">
+                    <div class="card-banner h-auto p-5 bg-primary rounded-5" style="height: 350px;">
+                        <div>
+                            <h2 class="text-white">
+                                Great products with <br />
+                                best deals
+                            </h2>
+                            <p class="text-white">No matter how far along you are in your sophistication as an amateur astronomer, there is always one.</p>
+                            <a asp-action="Search" asp-controller="Product" asp-route-offer="true" class="btn btn-light shadow-0 text-primary"> View more </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- container end.// -->
+</section>
+<!-- intro -->
 <!-- Products -->
 <section>
     <div class="container my-5">
         <header class="mb-4">
-            <h3>New Products</h3>
+            <h3>New products</h3>
         </header>
-        <div class="row">
-            @foreach (var product in Model)
-            {
-                <div class="col-lg-3 col-md-6 col-sm-6 d-flex">
-                    <div class="card my-2 shadow-sm border-0 rounded-3 w-100" style="display: flex; flex-direction: column; height: 100%;">
-                        <a asp-area="Customer" asp-controller="Product" asp-action="Details" asp-route-Id="@product.Id" class="text-decoration-none text-dark">
-                            <div class="card-img-top position-relative" style="height: 250px; overflow: hidden;">
-                                <img src="/@product.Thumbnail" class="img-fluid rounded-3 w-100 h-100" style="object-fit: cover;" />
-                                <div class="badge bg-danger position-absolute top-0 start-0 m-2">New</div>
-                            </div>
-                        </a>
-                        <div class="card-body p-3 d-flex flex-column justify-content-between" style="flex-grow: 1;">
-                            <div>
-                                <h5 class="card-title mb-2">@product.Title</h5>
-                                <span class="text-muted">@product.Price.ToString("C")</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between mt-3">
-                                <div class="text-muted small">
-                                    Model: X-200
-                                </div>
-                                <div class="text-warning small">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between mt-3">
-                                <a href="#!" class="btn btn-sm btn-light border-0 shadow-sm rounded-circle icon-hover">
-                                    <i class="fas fa-heart text-danger"></i>
-                                </a>
 
-                                <button type="button" class="btn btn-sm btn-light border-0 shadow-sm rounded-circle icon-hover" onclick="addToCart('@Url.Action("AddToCart", "Product", new { area = "Customer" })','@product.Id')">
-                                    <i class="fas fa-shopping-cart text-success"></i>
-                                </button>
-                            </div>
+        <div class="row">
+            @foreach (var product in Model.Products)
+            {
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card my-3 shadow-sm border-0">
+                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@product.Id" class="img-wrap">
+                            <img src="/@product.Thumbnail" class="card-img-top" style="height: 200px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                            @if (product.OnSale)
+                            {
+                                <span class="badge bg-success position-absolute top-0 start-0 m-2">Offer</span>
+                            }
+                        </a>
+                        <div class="card-body p-3">
+                            <h5 class="card-title mb-1">@product.Price.ToString("C")</h5>
+                            <p class="card-text text-muted">@product.Title</p>
                         </div>
                     </div>
                 </div>
@@ -63,10 +71,146 @@
     </div>
 </section>
 <!-- Products -->
+<!-- Feature -->
+<section class="">
+    <div class="container">
+        <div class="row gy-4">
+            <div class="col-lg-6">
+                <div class="card-banner bg-gray h-100" style="
+                                                      min-height: 200px;
+                                                      background-size: cover;
+                                                      background-position: center;
+                                                      width: 100%;
+                                                      background-repeat: no-repeat;
+                                                      top: 50%;
+                                                      background-image: url('https://mdbootstrap.com/img/bootstrap-ecommerce/banners/banner-item2.webp');">
+                    <div class="p-3 p-lg-5" style="max-width: 70%;">
+                        <h3 class="text-dark">Best products & brands in our store at 80% off</h3>
+                        <p>That's true but not always</p>
+                        <button class="btn btn-warning shadow-0" href="#"> Claim offer </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row mb-3 mb-sm-4 g-3 g-sm-4">
+                    <div class="col-6 d-flex">
+                        <div class="card w-100 bg-primary" style="min-height: 200px;">
+                            <div class="card-body">
+                                <h5 class="text-white">Gaming toolset</h5>
+                                <p class="text-white-50">Technology for cyber sport</p>
+                                <a class="btn btn-outline-light btn-sm" href="#">Learn more</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 d-flex">
+                        <div class="card w-100 bg-primary" style="min-height: 200px;">
+                            <div class="card-body">
+                                <h5 class="text-white">Quality sound</h5>
+                                <p class="text-white-50">All you need for music</p>
+                                <a class="btn btn-outline-light btn-sm" href="#">Learn more</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- row.// -->
 
-<partial name="_ProductPartial" />
-<partial name="_FeaturesPartial" />
-<partial name="_BlogPartial" />
+                <div class="card bg-success" style="min-height: 200px;">
+                    <div class="card-body">
+                        <h5 class="text-white">Buy 2 items, With special gift</h5>
+                        <p class="text-white-50" style="max-width: 400px;">Buy one, get one free marketing strategy helps your business improves the brand by sharing the profits</p>
+                        <a class="btn btn-outline-light btn-sm" href="#">Learn more</a>
+                    </div>
+                </div>
+            </div>
+            <!-- col.// -->
+        </div>
+        <!-- row.// -->
+    </div>
+    <!-- container end.// -->
+</section>
+<!-- Feature -->
+@if (Model.User?.Products?.Count > 0)
+{
+    <!-- Recently viewed -->
+    <section class="mt-5 mb-4">
+        <div class="container text-dark">
+            <header class="">
+                <h3 class="section-title">Recently viewed</h3>
+            </header>
+
+            <div class="row gy-3">
+                @foreach(var product in Model.User.Products.Take(6))
+                {
+                    <!-- col.// -->
+                    <div class="col-lg-2 col-md-4 col-4">
+                        <a asp-action="Details" asp-controller="Product" asp-route-Id="@product.Id" class="img-wrap">
+                            <img height="200" width="200" class="img-thumbnail" src="/@product.Thumbnail" />
+                        </a>
+                    </div>
+                    <!-- col.// -->
+                }
+            </div>
+        </div>
+    </section>
+    <!-- Recently viewed -->
+}
+
+
+
+
+<section>
+    <div class="container">
+        <div class="px-4 pt-3 border">
+            <div class="row pt-1">
+                <div class="col-lg-3 col-md-6 mb-3 d-flex">
+                    <div class="d-flex align-items-center">
+                        <div class="badge badge-warning p-2 rounded-4 me-3">
+                            <i class="fas fa-thumbs-up fa-2x fa-fw"></i>
+                        </div>
+                        <span class="info">
+                            <h6 class="title">Reasonable prices</h6>
+                            <p class="mb-0">Have you ever finally just</p>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3 d-flex">
+                    <div class="d-flex align-items-center">
+                        <div class="badge badge-warning p-2 rounded-4 me-3">
+                            <i class="fas fa-plane fa-2x fa-fw"></i>
+                        </div>
+                        <span class="info">
+                            <h6 class="title">Worldwide shipping</h6>
+                            <p class="mb-0">Have you ever finally just</p>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3 d-flex">
+                    <div class="d-flex align-items-center">
+                        <div class="badge badge-warning p-2 rounded-4 me-3">
+                            <i class="fas fa-star fa-2x fa-fw"></i>
+                        </div>
+                        <span class="info">
+                            <h6 class="title">Best ratings</h6>
+                            <p class="mb-0">Have you ever finally just</p>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3 d-flex">
+                    <div class="d-flex align-items-center">
+                        <div class="badge badge-warning p-2 rounded-4 me-3">
+                            <i class="fas fa-phone-alt fa-2x fa-fw"></i>
+                        </div>
+                        <span class="info">
+                            <h6 class="title">Help center</h6>
+                            <p class="mb-0">Have you ever finally just</p>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <partial name="_FooterPartial" />
 
 @section Scripts{

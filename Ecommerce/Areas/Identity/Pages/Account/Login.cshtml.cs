@@ -117,8 +117,26 @@ namespace ClickMart.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var username = new EmailAddressAttribute().IsValid(Input.Email) ?
-                  _userManager.FindByEmailAsync(Input.Email).Result.UserName  : Input.Email;
+                //var username = new EmailAddressAttribute().IsValid(Input.Email) ?
+                //  _userManager.FindByEmailAsync(Input.Email).Result.UserName  : Input.Email;
+                var isEmail = new EmailAddressAttribute().IsValid(Input.Email);
+                string username = "";
+                if (isEmail)
+                {
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    if(user != null)
+                    {
+                        username=user.UserName;
+                    }
+                    else
+                    {
+                        username=Input.Email;
+                    }
+                }
+                else
+                {
+                    username = Input.Email;
+                }
                 var result = await _signInManager.PasswordSignInAsync(username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {

@@ -31,6 +31,7 @@ namespace ClickMart.DataAccess.Repository
                 newProduct.DiscountPrice = product.DiscountPrice;
                 newProduct.Published = product.Published;
                 newProduct.Quantity = product.Quantity;
+                newProduct.OnSale = product.OnSale;
                 if(product.Galleries.Count > 0)
                 {
                     foreach(var galary in product.Galleries)
