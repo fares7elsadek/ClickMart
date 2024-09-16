@@ -50,69 +50,77 @@ namespace ClickMart.Areas.Customer.Controllers
             return View(viewModel);
         }
 
-        [HttpGet]
-        public IActionResult Search(string? categoryIds,bool? offer=false, string s = "", int page = 1)
-        {
-            if (string.IsNullOrEmpty(s) && string.IsNullOrEmpty(categoryIds) && offer == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            if (page <= 0)
-            {
-                page = 1;
-            }
+		[HttpGet]
+		public IActionResult Search(string? categoryIds, bool? offer = false, string s = "", int page = 1)
+		{
+			if (page <= 0)
+			{
+				page = 1;
+			}
 
-            List<Product> Products;
-            List<string> selectedCategories = new List<string>();
+			List<Product> Products = new List<Product>();
+			List<string> selectedCategories = new List<string>();
+
+			if (!string.IsNullOrEmpty(categoryIds))
+			{
+				var categoryIdList = categoryIds.Split(',').ToList();
+				selectedCategories = categoryIdList;
+
+				if (offer.HasValue)
+				{
+					Products = _unitOfWork.Product.GetAllWithCondition(p =>
+						categoryIdList.Contains(p.CategoryId) && p.OnSale == offer.Value && p.Title.Contains(s)
+					).ToList();
+				}
+				else
+				{
+					Products = _unitOfWork.Product.GetAllWithCondition(p =>
+						categoryIdList.Contains(p.CategoryId) && p.Title.Contains(s)
+					).ToList();
+				}
+			}
+			else if (offer.HasValue)
+			{
+				Products = _unitOfWork.Product.GetAllWithCondition(p =>
+					p.OnSale == offer.Value && p.Title.Contains(s)
+				).ToList();
+			}
+			else
+			{
+				Products = _unitOfWork.Product.GetAllWithCondition(p =>
+					p.Title.Contains(s)
+				).ToList();
+			}
+
+			int total = Products.Count();
+			int size = 5;
+			int pages = (int)Math.Ceiling((decimal)total / size);
+			if (page > pages)
+			{
+				page = pages;
+			}
+
+			var result = Products.Skip((page - 1) * size).Take(size).ToList();
+			var categories = _unitOfWork.Category.GetAll().ToList();
+
+			ProductSearchViewModel viewModel = new ProductSearchViewModel
+			{
+				products = result,
+				TotalProducts = total,
+				NumberOfPages = pages,
+				SerachString = s,
+				CurrentPage = page,
+				categories = categories,
+				SelectedCategories = selectedCategories.Select(id => id.ToString()).ToList()
+			};
+
+			return View(viewModel);
+		}
 
 
-            if (!string.IsNullOrEmpty(categoryIds))
-            {
-                var categoryIdList = categoryIds.Split(',').ToList();
-                selectedCategories = categoryIdList;
-                Products = _unitOfWork.Product.GetAllWithCondition(p =>
-                    categoryIdList.Contains(p.CategoryId) && p.Title.Contains(s)
-                    ).ToList();
-            }
-            else if (offer != null)
-            {
-                Products = _unitOfWork.Product.GetAllWithCondition(p => p.OnSale == offer).ToList();
-            }
-            else
-            {
-              
-                Products = _unitOfWork.Product.GetAllWithCondition(p => p.Title.Contains(s)).ToList();
-            }
 
-            int total = Products.Count();
-            int size = 5;
-            int pages = (int)Math.Ceiling((decimal)total / size);
-            if (page > pages)
-            {
-                page = pages;
-            }
-
-            var result = Products.Skip((page - 1) * size).Take(size).ToList();
-            var categories = _unitOfWork.Category.GetAll().ToList();
-
-          
-            ProductSearchViewModel viewModel = new ProductSearchViewModel
-            {
-                products = result,
-                TotalProducts = total,
-                NumberOfPages = pages,
-                SerachString = s,
-                CurrentPage = page,
-                categories = categories,
-                SelectedCategories = selectedCategories.Select(id => id.ToString()).ToList()
-            };
-
-            return View(viewModel);
-        }
-
-
-        #region APICALLS
-        [HttpPost]
+		#region APICALLS
+		[HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public IActionResult AddToCart(Cart cart,string? place)
